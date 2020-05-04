@@ -22,20 +22,64 @@ body {
 
 .card {
     width: 20%;
-    border-radius: 5px;
-    border: 1px solid #000000;
-    padding: 0.5%;
-    background-color: #ba6c6c;
-    //background-clip: content-box;
-    background-image: url('/images/2020.svg');
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
-    // background: linear-gradient(red, yellow);
 }
 
 .card a {
     display: block;
     width: 100%;
     height: 100%
+}
+
+/* entire container, keeps perspective */
+.flip-container {
+	perspective: 1000px;
+    width: 100%;
+    height: 100%
+}
+	/* flip the pane when hovered */
+	//.flip-container:hover .flipper, 
+    .flip-container.hover .flipper, .flip-container.flip .flipper {
+		transform: rotateY(180deg);
+	}
+
+.flip-container, .front, .back {
+	width: 100%;
+}
+
+/* flip speed goes here */
+.flipper {
+    height: 100%;
+	transition: 0.6s;
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+	backface-visibility: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+    height: 100%;
+    border-radius: 5px;
+    border: 1px solid #000000;
+}
+
+/* front pane, placed above back */
+.front {
+    background-color: #ba6c6c;
+    background-image: url('/images/2020.svg');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+	z-index: 2;
+	/* for firefox 31 */
+	transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+	transform: rotateY(180deg);
+    background: lightblue;
 }

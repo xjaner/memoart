@@ -11,8 +11,31 @@ defmodule MemoartWeb.PlayLive do
     <div class="container">
     <table class="board">
     <tr>
-    <td class="card"><a href="#" phx-click="a1">A1</a></td>
-    <td class="card">A2</td>
+    <td class="card">
+    <!-- <div class="flip-container" ontouchstart="this.classList.toggle('hover');"> -->
+    <div class="flip-container">
+    <div class="flipper">
+    <div class="front">
+    <a href="#" phx-click="a1"></a>
+    </div>
+    <div class="back" id="back-a1">
+    </div>
+    </div>
+    </div>
+
+    </td>
+    <td class="card">
+    <div class="flip-container" id="flip-toggle">
+    <div class="flipper">
+    <div class="front">
+    <a href="#" phx-click="a2"></a>
+    </div>
+    <div class="back" id="back-a2">
+    </div>
+    </div>
+    </div>
+    <button onclick="document.querySelector('#flip-toggle').classList.toggle('hover');" class="sexyButton">Toggle Flip</button>
+    </td>
     <td class="card">A3</td>
     <td class="card">A4</td>
     <td class="card">A5</td>
@@ -50,8 +73,8 @@ defmodule MemoartWeb.PlayLive do
     """
   end
 
-  def handle_event("a1", _, socket) do
-    IO.puts("A1!!!!")
+  def handle_event("a" <> card_id, _, socket) do
+    IO.puts("A#{card_id}!!!!")
     {:noreply, socket}
   end
 end
