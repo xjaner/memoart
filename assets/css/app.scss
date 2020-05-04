@@ -38,7 +38,8 @@ body {
 }
 	/* flip the pane when hovered */
 	//.flip-container:hover .flipper, 
-    .flip-container.hover .flipper, .flip-container.flip .flipper {
+    .flip-container.hover .flipper { //, 
+    //.flip-container.flip .flipper {
 		transform: rotateY(180deg);
 	}
 
@@ -49,7 +50,7 @@ body {
 /* flip speed goes here */
 .flipper {
     height: 100%;
-	transition: 0.6s;
+	transition: 6s;
 	transform-style: preserve-3d;
 
 	position: relative;
@@ -76,10 +77,16 @@ body {
 	z-index: 2;
 	/* for firefox 31 */
 	transform: rotateY(0deg);
+    //-webkit-transition: -webkit-transform 1s ease-in-out;
+    //-ms-transition: -ms-transform 1s ease-in-out;
+    //transition: transform 1s ease-in-out;
 }
 
 /* back, initially hidden pane */
 .back {
 	transform: rotateY(180deg);
     background: lightblue;
+    //-webkit-transition: -webkit-transform 1s ease-in-out;
+    //-ms-transition: -ms-transform 1s ease-in-out;
+    //transition: transform 1s ease-in-out;
 }

@@ -2,6 +2,8 @@ defmodule MemoartWeb.PlayLive do
   use MemoartWeb, :live_view
 
   def mount(_params, _session, socket) do
+    socket = assign(socket, :a1flip, "front")
+    socket = assign(socket, :a2flip, "")
     {:ok, socket}
   end
 
@@ -12,31 +14,41 @@ defmodule MemoartWeb.PlayLive do
     <table class="board">
     <tr>
     <td class="card">
-    <!-- <div class="flip-container" ontouchstart="this.classList.toggle('hover');"> -->
     <div class="flip-container">
     <div class="flipper">
-    <div class="front">
+    <div class="<%= @a1flip %>">
     <a href="#" phx-click="a1"></a>
-    </div>
-    <div class="back" id="back-a1">
     </div>
     </div>
     </div>
 
     </td>
     <td class="card">
-    <div class="flip-container" id="flip-toggle">
+    <div class="flip-container <%= @a2flip %>">
     <div class="flipper">
     <div class="front">
     <a href="#" phx-click="a2"></a>
     </div>
     <div class="back" id="back-a2">
+    <a href="#" phx-click="a2"></a>
     </div>
     </div>
     </div>
-    <button onclick="document.querySelector('#flip-toggle').classList.toggle('hover');" class="sexyButton">Toggle Flip</button>
     </td>
-    <td class="card">A3</td>
+    <td class="card">
+
+    <div class="flip-container">
+    <div class="flipper">
+    <!--<div class="front">-->
+    <div class="<%= @a1flip %>">
+    <a href="#" phx-click="a1"></a>
+    </div>
+    <!--<div class="back" id="back-a1">
+    </div>-->
+    </div>
+    </div>
+
+    </td>
     <td class="card">A4</td>
     <td class="card">A5</td>
     </tr>
@@ -73,8 +85,24 @@ defmodule MemoartWeb.PlayLive do
     """
   end
 
+  def handle_event("a2", _, socket) do
+    new_class = case socket.assigns.a2flip do
+      "" -> "g"
+      "g" -> "hover"
+      _ -> ""
+    end
+    IO.puts("A2 - a2flip:#{socket.assigns.a2flip} --> #{new_class}")
+    socket = assign(socket, :a2flip, new_class)
+    {:noreply, socket}
+  end
+
   def handle_event("a" <> card_id, _, socket) do
-    IO.puts("A#{card_id}!!!!")
+    new_class = case socket.assigns.a1flip do
+      "front" -> "back"
+      _ -> "front"
+    end
+    IO.puts("A#{card_id} - a1flip:#{socket.assigns.a1flip}")
+    socket = assign(socket, :a1flip, new_class)
     {:noreply, socket}
   end
 end
