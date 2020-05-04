@@ -50,9 +50,8 @@ body {
 /* flip speed goes here */
 .flipper {
     height: 100%;
-	transition: 6s;
+	transition: 1s;
 	transform-style: preserve-3d;
-
 	position: relative;
 }
 
@@ -77,16 +76,29 @@ body {
 	z-index: 2;
 	/* for firefox 31 */
 	transform: rotateY(0deg);
-    //-webkit-transition: -webkit-transform 1s ease-in-out;
-    //-ms-transition: -ms-transform 1s ease-in-out;
-    //transition: transform 1s ease-in-out;
 }
 
 /* back, initially hidden pane */
 .back {
 	transform: rotateY(180deg);
-    background: lightblue;
-    //-webkit-transition: -webkit-transform 1s ease-in-out;
-    //-ms-transition: -ms-transform 1s ease-in-out;
-    //transition: transform 1s ease-in-out;
+    --background: lightblue;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.back.vangogh {
+    background-image: url('/images/starrynight.png');
+}
+.back.gernika {
+    background-image: url('/images/gernika.png');
+}
+.back.kandinsky {
+    background-image: url('/images/kandinsky.png');
+}
+.back.monet {
+    background-image: url('/images/monet.png');
+}
+.back.rothko {
+    background-image: url('/images/rothko.png');
 }
