@@ -3,45 +3,21 @@
     <table class="board">
     <tr>
 
+    <%= for {card_data, idx} <- Enum.with_index(@cards) do %>
     <td class="card">
-    <div class="flip-container <%= @card_flip_1 %>">
+    <div class="flip-container <%= card_data.flipped %>">
     <div class="flipper">
     <div class="front">
-    <a href="#" phx-click="card_click_1"></a>
+      <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
     </div>
-    <div class="back <%= @card_back_1 %>">
-    <a href="#" phx-click="card_click_1"></a>
+    <div class="back <%= card_data.painting %>">
+      <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
     </div>
     </div>
     </div>
     </td>
+    <% end %>
 
-    <td class="card">
-    <div class="flip-container <%= @card_flip_2 %>">
-    <div class="flipper">
-    <div class="front">
-    <a href="#" phx-click="card_click_2"></a>
-    </div>
-    <div class="back <%= @card_back_2 %>">
-    <a href="#" phx-click="card_click_2"></a>
-    </div>
-    </div>
-    </div>
-    </td>
-
-    <td class="card">
-    <div class="flip-container">
-    <div class="flipper">
-    <div class="front">
-    <a href="#" phx-click="a1"></a>
-    </div>
-    <div class="back">
-    </div>
-    </div>
-    </div>
-    </td>
-    <td class="card">A4</td>
-    <td class="card">A5</td>
     </tr>
     <tr>
     <td class="card">B1</td>

@@ -4,10 +4,8 @@ defmodule MemoartWeb.PlayLive do
   alias MemoartWeb.PlayView
 
   def mount(_params, _session, socket) do
-    socket = assign(socket, :card_flip_1, "")
-    socket = assign(socket, :card_flip_2, "")
-    socket = assign(socket, :card_back_1, "kandinsky")
-    socket = assign(socket, :card_back_2, "gernika")
+    cards = Memoart.Game.new_game()
+    socket = assign(socket, :cards, cards)
     {:ok, socket}
   end
 
@@ -25,14 +23,12 @@ defmodule MemoartWeb.PlayLive do
     {:noreply, socket}
   end
 
-  def handle_event("card_click_" <> card_id, _, socket) do
-    flip_atom = String.to_atom("card_flip_#{card_id}")
-    new_class = case socket.assigns[flip_atom] do
-      "" -> "hover"
-      _ -> ""
-    end
-    IO.puts("A#{card_id}")
-    socket = assign(socket, flip_atom, new_class)
+  def handle_event("card_click_" <> card_id, _,socket) do
+    IO.puts("card_click")
+    IO.inspect(card_id)
+    cards = socket.assigns.cards
+            |> Memoart.Game.process_click(String.to_integer(card_id))
+    socket = assign(socket, :cards, cards)
     {:noreply, socket}
   end
 end
