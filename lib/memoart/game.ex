@@ -1,6 +1,14 @@
 defmodule Memoart.Game do
   @num_cards 25
 
+  @items [
+    "canvas",
+    "palette",
+    "roller",
+    "splash",
+    "star"
+  ]
+
   @paintings [
     "gernika",
     "kandinsky",
@@ -10,18 +18,24 @@ defmodule Memoart.Game do
   ]
 
   def new_game do
-    paintings = get_paintings()
-    Enum.map(1..@num_cards, fn n -> %Memoart.Card{id: n - 1, painting: Enum.at(paintings, n)} end)
+    pairs = get_pairs()
+    Enum.map(1..@num_cards, fn n -> 
+      pair = Enum.at(pairs, n - 1)
+      %Memoart.Card{
+        id: n - 1, 
+        item: pair.item,
+        painting: pair.painting
+      } 
+    end)
   end
 
-  defp replicate(l, n) do
-    for _ <- 1..n, do: l
-  end
-
-  def get_paintings do
-    @paintings
-    |> replicate(5)
-    |> List.flatten()
+  defp get_pairs do
+    for painting <- @paintings, item <- @items do
+      %{
+        painting: painting,
+        item: item
+      }
+    end
     |> Enum.shuffle()
   end
 

@@ -82,23 +82,192 @@ body {
 .back {
 	transform: rotateY(180deg);
     --background: lightblue;
-    background-size: 100%;
+}
+
+/* images */
+.back.gernika.star {
+    background-image: url('/images/star.png'), url('/images/gernika.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.kandinsky.star {
+    background-image: url('/images/star.png'), url('/images/kandinsky.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.monet.star {
+    background-image: url('/images/star.png'), url('/images/monet.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.rothko.star {
+    background-image: url('/images/star.png'), url('/images/rothko.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.vangogh.star {
+    background-image: url('/images/star.png'), url('/images/vangogh.png');
+    background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 
+.back.gernika.canvas {
+    background-image: url('/images/canvas.png'), url('/images/gernika.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.kandinsky.canvas {
+    background-image: url('/images/canvas.png'), url('/images/kandinsky.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.monet.canvas {
+    background-image: url('/images/canvas.png'), url('/images/monet.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.rothko.canvas {
+    background-image: url('/images/canvas.png'), url('/images/rothko.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.vangogh.canvas {
+    background-image: url('/images/canvas.png'), url('/images/vangogh.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.back.gernika.palette {
+    background-image: url('/images/palette.svg'), url('/images/gernika.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.kandinsky.palette {
+    background-image: url('/images/palette.svg'), url('/images/kandinsky.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.monet.palette {
+    background-image: url('/images/palette.svg'), url('/images/monet.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.rothko.palette {
+    background-image: url('/images/palette.svg'), url('/images/rothko.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.vangogh.palette {
+    background-image: url('/images/palette.svg'), url('/images/vangogh.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.back.gernika.roller {
+    background-image: url('/images/roller.svg'), url('/images/gernika.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.kandinsky.roller {
+    background-image: url('/images/roller.svg'), url('/images/kandinsky.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.monet.roller {
+    background-image: url('/images/roller.svg'), url('/images/monet.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.rothko.roller {
+    background-image: url('/images/roller.svg'), url('/images/rothko.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.vangogh.roller {
+    background-image: url('/images/roller.svg'), url('/images/vangogh.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.back.gernika.splash {
+    background-image: url('/images/splash.svg'), url('/images/gernika.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.kandinsky.splash {
+    background-image: url('/images/splash.svg'), url('/images/kandinsky.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.monet.splash {
+    background-image: url('/images/splash.svg'), url('/images/monet.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.rothko.splash {
+    background-image: url('/images/splash.svg'), url('/images/rothko.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.back.vangogh.splash {
+    background-image: url('/images/splash.svg'), url('/images/vangogh.png');
+    background-size: 50%, 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* backgrounds */
 .back.vangogh {
     background-image: url('/images/starrynight.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .back.gernika {
     background-image: url('/images/gernika.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .back.kandinsky {
     background-image: url('/images/kandinsky.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .back.monet {
     background-image: url('/images/monet.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .back.rothko {
     background-image: url('/images/rothko.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
