@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  @num_cards 5
+  @num_cards 25
 
   @paintings [
     "gernika",
