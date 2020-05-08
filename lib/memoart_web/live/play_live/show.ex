@@ -1,9 +1,22 @@
-defmodule MemoartWeb.PlayLive do
+defmodule MemoartWeb.PlayLive.Show do
   use MemoartWeb, :live_view
 
   alias MemoartWeb.PlayView
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
+    IO.inspect(params)
+    game = "game:joc1"
+    initial_count = MemoartWeb.Presence.list(game) |> map_size
+    MemoartWeb.Endpoint.subscribe(game)
+
+    MemoartWeb.Presence.track(
+      self(),
+      game,
+      socket.id,
+      %{}
+    )
+    socket = assign(socket, :reader_count, initial_count)
+
     cards = Memoart.Game.new_game()
     socket = assign(socket, :cards, cards)
     {:ok, socket}
@@ -30,5 +43,14 @@ defmodule MemoartWeb.PlayLive do
             |> Memoart.Game.process_click(String.to_integer(card_id))
     socket = assign(socket, :cards, cards)
     {:noreply, socket}
+  end
+
+  def handle_info(
+        %{event: "presence_diff", payload: %{joins: joins, leaves: leaves}},
+        %{assigns: %{reader_count: count}} = socket
+      ) do
+    reader_count = count + map_size(joins) - map_size(leaves)
+
+    {:noreply, assign(socket, :reader_count, reader_count)}
   end
 end

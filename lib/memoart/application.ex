@@ -14,9 +14,10 @@ defmodule Memoart.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Memoart.PubSub},
       # Start the Endpoint (http/https)
-      MemoartWeb.Endpoint
+      MemoartWeb.Endpoint,
       # Start a worker by calling: Memoart.Worker.start_link(arg)
       # {Memoart.Worker, arg}
+      MemoartWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

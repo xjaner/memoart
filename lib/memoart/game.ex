@@ -39,6 +39,23 @@ defmodule Memoart.Game do
     |> Enum.shuffle()
   end
 
+  defp rotate(l) do
+    l
+    |> Enum.reverse()
+    |> List.zip()
+    |> Enum.map(&(Tuple.to_list(&1)))
+  end
+
+  def rotaten(l, 0) do
+    l
+    |> List.flatten
+  end
+
+  def rotaten(l, n) do
+    rotaten(rotate(l), n - 1)
+  end
+
+
   defp flip_flipped(card) do
     case card.flipped do
       "" -> %{card | flipped: "hover"}
