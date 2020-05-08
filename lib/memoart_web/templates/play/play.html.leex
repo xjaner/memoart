@@ -1,27 +1,37 @@
-    <h3>Juga al Memoart!</h3>
-    <h5>Ets el jugador <%= @reader_count %></h5>
-    <div class="container">
-    <table class="board">
-
+<h3>Juga al Memoart!</h3>
+<h5>Ets el jugador <%= @player_num + 1 %> de <%= @reader_count %>.</h5>
+<div class="container">
+  <table class="board">
     <%= for {card_data, idx} <- Enum.with_index(@cards) do %>
       <%= if rem(idx,5) == 0 do %>
-      <tr>
+        <tr>
       <% end %>
-    <td class="card">
-    <div class="flip-container <%= card_data.flipped %>">
-    <div class="flipper">
-    <div class="front">
-      <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
-    </div>
-    <div class="back <%= card_data.painting %> <%= card_data.item %>">
-      <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
-    </div>
-    </div>
-    </div>
-    </td>
+      <td class="card">
+        <div class="flip-container <%= card_data.flipped %>">
+          <div class="flipper">
+            <div class="front">
+              <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+            </div>
+            <div class="back <%= card_data.painting %> <%= card_data.item %>">
+              <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+            </div>
+          </div>
+        </div>
+      </td>
       <%= if rem(idx,5) == 4 do %>
-      </tr>
+          </tr>
       <% end %>
     <% end %>
-    </table>
+  </table>
+  <%= if MemoartWeb.PlayLive.Show.splash(assigns) do %>
+    <div class="splash">
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="joined">
+          <h1><%= @error %></h1>
+        </div>
+        <a href="/" class="icon-padding action-button animate purple">Try Again</a>
+      </div>
     </div>
+  <% end %>
+</div>

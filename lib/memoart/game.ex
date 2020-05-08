@@ -17,9 +17,13 @@ defmodule Memoart.Game do
     "vangogh"
   ]
 
-  def new_game do
+  # def new_game(player_num) when player_num > 2 do
+  #   {:error, :full_game}
+  # end
+
+  def new_game(player_num) do
     pairs = get_pairs()
-    Enum.map(1..@num_cards, fn n -> 
+    cards = Enum.map(1..@num_cards, fn n -> 
       pair = Enum.at(pairs, n - 1)
       %Memoart.Card{
         id: n - 1, 
@@ -27,9 +31,16 @@ defmodule Memoart.Game do
         painting: pair.painting
       } 
     end)
+    |> rotaten(player_num)
+    cond do
+      player_num > 1 ->
+        {:error, cards}
+      true ->
+        {:ok, cards}
+    end
   end
 
-  defp get_pairs do
+  def get_pairs do
     for painting <- @paintings, item <- @items do
       %{
         painting: painting,
@@ -39,16 +50,17 @@ defmodule Memoart.Game do
     |> Enum.shuffle()
   end
 
-  defp rotate(l) do
+  def rotate(l) do
     l
+    |> Enum.chunk_every(5)
     |> Enum.reverse()
     |> List.zip()
     |> Enum.map(&(Tuple.to_list(&1)))
+    |> List.flatten
   end
 
   def rotaten(l, 0) do
     l
-    |> List.flatten
   end
 
   def rotaten(l, n) do
