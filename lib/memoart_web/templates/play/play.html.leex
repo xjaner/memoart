@@ -1,5 +1,5 @@
 <h3>Juga al Memoart!</h3>
-<h5>Ets el jugador <%= @player_num + 1 %> de <%= @reader_count %>.</h5>
+<h5>Ets el jugador <%= @player_num + 1 %> de <%= @num_players %>.</h5>
 <div class="container">
   <table class="board">
     <%= for {card_data, idx} <- Enum.with_index(@cards) do %>
@@ -23,7 +23,7 @@
       <% end %>
     <% end %>
   </table>
-  <%= if MemoartWeb.PlayLive.Show.splash(assigns) do %>
+  <%= if MemoartWeb.PlayLive.Show.error(assigns) do %>
     <div class="splash">
       <div class="overlay"></div>
       <div class="content">

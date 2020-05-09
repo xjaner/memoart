@@ -1,5 +1,7 @@
 defmodule Memoart.Game do
+  defstruct state: :waiting, num_players: 0, current_player: nil, last_card: nil, cards: [], points: %{}, error: nil
   @num_cards 25
+  @max_players 4
 
   @items [
     "canvas",
@@ -17,30 +19,42 @@ defmodule Memoart.Game do
     "vangogh"
   ]
 
-  # def new_game(player_num) when player_num > 2 do
-  #   {:error, :full_game}
-  # end
-
-  def new_game(player_num) do
-    pairs = get_pairs()
-    cards = Enum.map(1..@num_cards, fn n -> 
-      pair = Enum.at(pairs, n - 1)
-      %Memoart.Card{
-        id: n - 1, 
-        item: pair.item,
-        painting: pair.painting
-      } 
-    end)
-    |> rotaten(player_num)
-    cond do
-      player_num > 1 ->
-        {:error, cards}
-      true ->
-        {:ok, cards}
+  def get_game_session(game_name) do
+    case get_session_pid(game_name) do
+      pid when is_pid(pid) ->
+        pid
+      _ ->
+        new_game(game_name)
     end
+    Memoart.Session.get_game_state(game_name)
   end
 
-  def get_pairs do
+  def get_session_pid(game_name) do
+    game_name
+    |> String.to_atom()
+    |> Process.whereis()
+  end
+
+  def new_game(game_name) do
+    cards = get_cards()
+    GenServer.start_link(Memoart.Session, %{cards: cards}, name: String.to_atom(game_name))
+  end
+
+  defp get_cards() do
+    pairs = get_pairs()
+    Enum.map(1..@num_cards, fn n ->
+      pair = Enum.at(pairs, n - 1)
+      %Memoart.Card{
+        id: n - 1,
+        item: pair.item,
+        painting: pair.painting
+      }
+    end)
+    # We'll rotate at the live view
+    # |> rotaten(player_num)
+  end
+
+  defp get_pairs do
     for painting <- @paintings, item <- @items do
       %{
         painting: painting,
@@ -50,7 +64,7 @@ defmodule Memoart.Game do
     |> Enum.shuffle()
   end
 
-  def rotate(l) do
+  defp rotate(l) do
     l
     |> Enum.chunk_every(5)
     |> Enum.reverse()
@@ -59,11 +73,11 @@ defmodule Memoart.Game do
     |> List.flatten
   end
 
-  def rotaten(l, 0) do
+  defp rotaten(l, 0) do
     l
   end
 
-  def rotaten(l, n) do
+  defp rotaten(l, n) do
     rotaten(rotate(l), n - 1)
   end
 
