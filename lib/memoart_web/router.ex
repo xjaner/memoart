@@ -17,8 +17,8 @@ defmodule MemoartWeb.Router do
   scope "/", MemoartWeb do
     pipe_through :browser
 
-    live "/", PlayLive.Index
-    live "/play/:game_id", PlayLive.Show
+    get "/", PageController, :index
+    post "/play", PageController, :new
   end
 
   # Other scopes may use custom stacks.

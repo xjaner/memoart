@@ -2,8 +2,8 @@ defmodule Memoart.Session do
   use GenServer
 
   @impl GenServer
-  def init(%{cards: cards}) do
-    {:ok, %Memoart.Game{cards: cards}}
+  def init(%{cards: cards, game_name: game_name}) do
+    {:ok, %Memoart.Game{cards: cards, game_name: game_name}}
   end
 
   defp call_function(game_name, args) do

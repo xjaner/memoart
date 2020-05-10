@@ -1,16 +1,19 @@
-defmodule MemoartWeb.PlayLive.Show do
+defmodule MemoartWeb.PlayLive do
   use MemoartWeb, :live_view
 
   alias MemoartWeb.PlayView
   alias Phoenix.Socket.Broadcast
 
-  def mount(%{"game_id" => game_id}, _session, socket) do
+  def mount(_params, %{"game_id" => game_id}, socket) do
     game_name = "game:#{game_id}"
     if connected?(socket), do: subscribe(game_name)
 
     game_state = Memoart.Game.get_game_session(game_name)
+    IO.puts("Getting #{game_name} game state'")
+    IO.inspect(game_state.points)
     # This can cause race conditions
     player_id = "player_#{Enum.count(game_state.points) + 1}"
+    IO.puts("[mount] New player: #{player_id}")
     game_state = Memoart.Session.add_player(game_name, player_id)
 
     socket = assign(socket, 
@@ -19,6 +22,7 @@ defmodule MemoartWeb.PlayLive.Show do
     )
 
     socket = set_game_state(socket, game_state)
+    IO.inspect(game_state.points)
 
     {:ok, socket}
   end
