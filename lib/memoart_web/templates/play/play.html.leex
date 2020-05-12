@@ -1,5 +1,5 @@
 <h3>Juga al Memoart!</h3>
-<h5>Ets el jugador <%= @player_id%>. A la partida hi ha <%= Enum.count(@points) %> jugadors.</h5>
+<h5>Ets el jugador <%= @player_id%>. A la partida hi ha <%= Enum.count(@points) %> jugador(s).</h5>
 <div class="container">
   <table class="board">
     <%= for {card_data, idx} <- Enum.with_index(@cards) do %>

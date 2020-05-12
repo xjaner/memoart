@@ -4,23 +4,20 @@ defmodule MemoartWeb.PlayLive do
   alias MemoartWeb.PlayView
   alias Phoenix.Socket.Broadcast
 
-  def mount(_params, %{"game_id" => game_id}, socket) do
+  def mount(_params, %{"game_id" => game_id, "player_id" => player_id}, socket) do
     game_name = "game:#{game_id}"
     if connected?(socket), do: subscribe(game_name)
 
-    game_state = Memoart.Game.get_game_session(game_name)
+    game_state = Memoart.Game.get_game_session(game_name, player_id)
     IO.puts("Getting #{game_name} game state'")
     IO.inspect(game_state.points)
-    # This can cause race conditions
-    player_id = "player_#{Enum.count(game_state.points) + 1}"
-    IO.puts("[mount] New player: #{player_id}")
-    game_state = Memoart.Session.add_player(game_name, player_id)
 
-    socket = assign(socket, 
+    socket = assign(socket,
       game_name: game_name,
-      player_id: player_id,
+      player_id: player_id
     )
 
+    IO.puts("flwkjnwlkjne: len(points): #{Enum.count(game_state.points)}")
     socket = set_game_state(socket, game_state)
     IO.inspect(game_state.points)
 
@@ -36,10 +33,11 @@ defmodule MemoartWeb.PlayLive do
   end
 
   def handle_event("card_click_" <> card_id, _,socket) do
-    IO.puts("card_click_#{card_id}")
     %{game_name: game_name, player_id: player_id} = socket.assigns
+    IO.puts("card_click_#{card_id} by player #{player_id} in game #{game_name}")
     new_state = Memoart.Session.card_click(game_name, card_id, player_id)
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
+    IO.puts("flwkjnwlkjne: len(points): #{Enum.count(new_state.points)}")
     socket = set_game_state(socket, new_state)
     IO.puts("card_click_#{card_id} processed")
     {:noreply, socket}
@@ -63,7 +61,7 @@ defmodule MemoartWeb.PlayLive do
     %Memoart.Game{state: state, current_player: current_player, last_card: last_card, cards: cards, points: points, error: error} = game_state
     assign(
       socket,
-      state: socket,
+      state: state,
       current_player: current_player,
       last_card: last_card,
       cards: cards,

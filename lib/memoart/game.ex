@@ -19,7 +19,7 @@ defmodule Memoart.Game do
     "vangogh"
   ]
 
-  def get_game_session(game_name) do
+  def get_game_session(game_name, player_id) do
     case get_session_pid(game_name) do
       pid when is_pid(pid) ->
         IO.puts("Game #{game_name} already exists")
@@ -28,7 +28,7 @@ defmodule Memoart.Game do
         IO.puts("Creating game #{game_name}")
         new_game(game_name)
     end
-    Memoart.Session.get_game_state(game_name)
+    Memoart.Session.add_player(game_name, player_id)
   end
 
   def add_player(game_state, player_id) do
