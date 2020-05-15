@@ -19,7 +19,7 @@ defmodule Memoart.Game do
     "vangogh"
   ]
 
-  @seat_rotations %{
+  @seat_rotation %{
       0 => 0,
       1 => 2,
       2 => 1,
@@ -41,7 +41,13 @@ defmodule Memoart.Game do
   def add_player(game_state, player_id) do
     case game_state.points do
       %{^player_id => _} -> game_state
-      _ -> add_player_to_points_and_rotation(game_state, player_id)
+      _ ->
+        cond do
+          Enum.count(game_state.points) >= @max_players ->
+            %{game_state | error: "La partida està plena!"}
+          true ->
+            add_player_to_points_and_rotation(game_state, player_id)
+        end
     end
   end
 
@@ -49,14 +55,14 @@ defmodule Memoart.Game do
     game_state
     |> add_player_to_points(player_id)
     |> add_player_to_rotation(player_id)
-end
+  end
 
   defp add_player_to_points(game_state, player_id) do
     %{game_state | points: Map.put_new(game_state.points, player_id, 0)}
   end
 
   defp add_player_to_rotation(game_state, player_id) do
-    %{game_state | rotation: Map.put_new(game_state.rotation, player_id, @seat_rotations[Enum.count(game_state.rotation)])}
+    %{game_state | rotation: Map.put_new(game_state.rotation, player_id, @seat_rotation[Enum.count(game_state.rotation)])}
   end
 
   def get_session_pid(game_name) do
@@ -136,7 +142,11 @@ end
     |> process_matching(game_state)
   end
 
-  def rotate_cards(cards, rotations) do
-    rotaten(cards, rotations)
+  def rotate_cards(game_state, player_id) do
+    rotation = case Map.fetch(game_state.rotation, player_id) do
+      {:ok, rotation} -> rotation
+      :error -> 0
+    end
+    rotaten(game_state.cards, rotation)
   end
 end

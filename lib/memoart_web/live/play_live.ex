@@ -17,7 +17,6 @@ defmodule MemoartWeb.PlayLive do
       player_id: player_id
     )
 
-    IO.puts("flwkjnwlkjne: len(points): #{Enum.count(game_state.points)}")
     socket = set_game_state(socket, game_state)
     IO.inspect(game_state.points)
 
@@ -37,14 +36,12 @@ defmodule MemoartWeb.PlayLive do
     IO.puts("card_click_#{card_id} by player #{player_id} in game #{game_name}")
     new_state = Memoart.Session.card_click(game_name, card_id, player_id)
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
-    IO.puts("flwkjnwlkjne: len(points): #{Enum.count(new_state.points)}")
     socket = set_game_state(socket, new_state)
     IO.puts("card_click_#{card_id} processed")
     {:noreply, socket}
   end
 
   def handle_info(%Broadcast{event: "refresh_state", payload: game_state}, socket) do
-    IO.puts("[Player #{socket.assigns.player_id}] REFRESH STATE")
     {:noreply, set_game_state(socket, game_state)}
   end
 
@@ -58,8 +55,8 @@ defmodule MemoartWeb.PlayLive do
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player: current_player, last_card: last_card, cards: cards, points: points, error: error, rotation: rotation} = game_state
-    cards = Memoart.Game.rotate_cards(cards, rotation[socket.assigns.player_id])
+    %Memoart.Game{state: state, current_player: current_player, last_card: last_card, points: points, error: error} = game_state
+    cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_id)
     assign(
       socket,
       state: state,
