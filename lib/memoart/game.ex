@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  defstruct game_name: nil, state: :waiting, current_player: nil, last_card: nil, cards: [], points: %{}, error: nil
+  defstruct game_name: nil, state: :waiting, current_player: nil, last_card: nil, cards: [], points: %{}, error: nil, rotation: %{}
   @num_cards 25
   @max_players 4
 
@@ -19,6 +19,13 @@ defmodule Memoart.Game do
     "vangogh"
   ]
 
+  @seat_rotations %{
+      0 => 0,
+      1 => 2,
+      2 => 1,
+      3 => 3
+  }
+
   def get_game_session(game_name, player_id) do
     case get_session_pid(game_name) do
       pid when is_pid(pid) ->
@@ -33,14 +40,23 @@ defmodule Memoart.Game do
 
   def add_player(game_state, player_id) do
     case game_state.points do
-      %{^player_id => _} -> game_state.points
-      _ -> Map.put_new(game_state.points, player_id, 0)
+      %{^player_id => _} -> game_state
+      _ -> add_player_to_points_and_rotation(game_state, player_id)
     end
-    |> update_points(game_state)
   end
 
-  defp update_points(points, game_state) do
-    %{game_state | points: points}
+  defp add_player_to_points_and_rotation(game_state, player_id) do
+    game_state
+    |> add_player_to_points(player_id)
+    |> add_player_to_rotation(player_id)
+end
+
+  defp add_player_to_points(game_state, player_id) do
+    %{game_state | points: Map.put_new(game_state.points, player_id, 0)}
+  end
+
+  defp add_player_to_rotation(game_state, player_id) do
+    %{game_state | rotation: Map.put_new(game_state.rotation, player_id, @seat_rotations[Enum.count(game_state.rotation)])}
   end
 
   def get_session_pid(game_name) do
@@ -64,8 +80,6 @@ defmodule Memoart.Game do
         painting: pair.painting
       }
     end)
-    # We'll rotate at the live view
-    # |> rotaten(player_id)
   end
 
   defp get_pairs do
@@ -120,5 +134,9 @@ defmodule Memoart.Game do
     cards
     |> Enum.map(&(flip_card(&1, String.to_integer(card_id))))
     |> process_matching(game_state)
+  end
+
+  def rotate_cards(cards, rotations) do
+    rotaten(cards, rotations)
   end
 end

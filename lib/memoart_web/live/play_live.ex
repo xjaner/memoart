@@ -58,7 +58,8 @@ defmodule MemoartWeb.PlayLive do
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player: current_player, last_card: last_card, cards: cards, points: points, error: error} = game_state
+    %Memoart.Game{state: state, current_player: current_player, last_card: last_card, cards: cards, points: points, error: error, rotation: rotation} = game_state
+    cards = Memoart.Game.rotate_cards(cards, rotation[socket.assigns.player_id])
     assign(
       socket,
       state: state,

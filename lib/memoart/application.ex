@@ -8,7 +8,7 @@ defmodule Memoart.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      Memoart.Repo,
+      # Memoart.Repo,
       # Start the Telemetry supervisor
       MemoartWeb.Telemetry,
       # Start the PubSub system
