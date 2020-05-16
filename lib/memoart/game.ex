@@ -194,6 +194,8 @@ defmodule Memoart.Game do
         cards
         |> Enum.map(&(flip_card(&1, String.to_integer(card_id))))
         |> process_matching(game_state)
+        |> next_player()
+
       _ -> game_state
     end
   end
@@ -235,5 +237,9 @@ defmodule Memoart.Game do
       _ ->
         cards
     end
+  end
+
+  def next_player(state) do
+    %{state | current_player_id: rem(state.current_player_id + 1, Enum.count(state.players))}
   end
 end
