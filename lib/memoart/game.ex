@@ -15,8 +15,7 @@ defmodule Memoart.Game do
 
   @num_cards 25
   @max_players 4
-  @countdown_seconds 4
-  # @countdown_seconds 15
+  @countdown_seconds 15
 
 
   @items [
@@ -40,6 +39,13 @@ defmodule Memoart.Game do
       1 => 2,
       2 => 1,
       3 => 3
+  }
+
+  @flipped_cards_per_player %{
+    0 => [1, 2, 3],
+    1 => [23, 22, 21],
+    2 => [15, 10, 5],
+    3 => [9, 14, 19]
   }
 
   defp item_pos([], _) do
@@ -162,6 +168,14 @@ defmodule Memoart.Game do
     end
   end
 
+  defp flip_card(card, card_ids) when is_list(card_ids) do
+    cond do
+      card.id in card_ids ->
+        flip_flipped(card)
+      true -> card
+    end
+  end
+
   defp flip_card(card, card_id) do
     cond do
       card.id == card_id ->
@@ -211,5 +225,15 @@ defmodule Memoart.Game do
     # Set current_round
     # Set state to next round
     %{game_state | state: :round_1, current_player_id: 0, alive_players: game_state.players}
+  end
+
+  def show_first_line_if_needed(state, cards, player_id) do
+    case state do
+      :showing_first_line ->
+        cards
+        |> Enum.map(&(flip_card(&1, Map.get(@flipped_cards_per_player, player_id))))
+      _ ->
+        cards
+    end
   end
 end
