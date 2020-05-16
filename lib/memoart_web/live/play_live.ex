@@ -9,12 +9,13 @@ defmodule MemoartWeb.PlayLive do
     game_name = "game:#{game_id}"
     if connected?(socket), do: subscribe(game_name)
 
-    game_state = Memoart.Game.get_game_session(game_name, player_name)
+    {game_state, player_id} = Memoart.Game.get_game_session(game_name, player_name)
     IO.puts("Getting #{game_name} game state'")
 
     socket = assign(socket,
       game_name: game_name,
       player_name: player_name,
+      player_id: player_id
     )
 
     socket = set_game_state(socket, game_state)
@@ -39,9 +40,9 @@ defmodule MemoartWeb.PlayLive do
   end
 
   def handle_event("card_click_" <> card_id, _,socket) do
-    %{game_name: game_name, player_name: player_name} = socket.assigns
+    %{game_name: game_name, player_name: player_name, player_id: player_id} = socket.assigns
     IO.puts("card_click_#{card_id} by player #{player_name} in game #{game_name}")
-    new_state = Memoart.Session.card_click(game_name, card_id, player_name)
+    new_state = Memoart.Session.card_click(game_name, card_id, player_id)
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
     socket = set_game_state(socket, new_state)
     IO.puts("card_click_#{card_id} processed")
@@ -87,12 +88,14 @@ defmodule MemoartWeb.PlayLive do
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player: current_player, current_round: current_round, last_card: last_card, points: points, error: error, countdown: countdown} = game_state
+    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card: last_card, points: points, error: error, countdown: countdown} = game_state
     cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_name)
+    IO.puts("set_game_state - current_player_id: #{current_player_id}")
     assign(
       socket,
       state: state,
-      current_player: current_player,
+      current_player: Enum.at(game_state.players, current_player_id || 0),  # I need to pass a default value in case current_player_id is nil
+      current_player_id: current_player_id,
       current_round: current_round,
       last_card: last_card,
       cards: cards,

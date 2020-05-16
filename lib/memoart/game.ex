@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  defstruct game_name: nil, state: :waiting, current_round: 0, current_player: nil, last_card: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil
+  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, alive_players: []
 
   # States:
   # - waiting
@@ -15,7 +15,8 @@ defmodule Memoart.Game do
 
   @num_cards 25
   @max_players 4
-  @countdown_seconds 15
+  @countdown_seconds 4
+  # @countdown_seconds 15
 
 
   @items [
@@ -41,6 +42,21 @@ defmodule Memoart.Game do
       3 => 3
   }
 
+  defp item_pos([], _) do
+    nil
+  end
+
+  defp item_pos([head | tail], key) do
+    case head do
+      {^key, idx} -> idx
+      _ -> item_pos(tail, key)
+    end
+  end
+
+  defp get_item_pos(l, item) do
+    item_pos(Enum.with_index(l), item)
+  end
+
   def get_game_session(game_name, player_name) do
     case get_session_pid(game_name) do
       pid when is_pid(pid) ->
@@ -54,12 +70,13 @@ defmodule Memoart.Game do
   end
 
   def add_player(game_state, player_name) do
-    case game_state.points do
-      %{^player_name => _} -> game_state
+    case get_item_pos(game_state.players, player_name) do
+      index when is_integer(index) -> {game_state, index}
       _ ->
         cond do
           Enum.count(game_state.points) >= @max_players ->
-            %{game_state | error: "La partida està plena!"}
+            game_state = %{game_state | error: "La partida està plena!"}
+            {game_state, nil}
           true ->
             add_player_to_points_and_rotation(game_state, player_name)
         end
@@ -82,7 +99,9 @@ defmodule Memoart.Game do
   end
 
   defp add_player_to_players(game_state, player_name) do
-    %{game_state | current_player: player_name, players: game_state.players ++ [player_name]}
+    new_player_id = Enum.count(game_state.players)
+    game_state = %{game_state | players: game_state.players ++ [player_name]}
+    {game_state, new_player_id}
   end
 
   def get_session_pid(game_name) do
@@ -155,9 +174,9 @@ defmodule Memoart.Game do
       %{game_state | cards: cards}
   end
 
-  def card_click(%{cards: cards, current_player: current_player} = game_state, card_id, player_name) do
-    case current_player do
-      ^player_name ->
+  def card_click(%{cards: cards, current_player_id: current_player_id} = game_state, card_id, player_id) do
+    case current_player_id do
+      ^player_id ->
         cards
         |> Enum.map(&(flip_card(&1, String.to_integer(card_id))))
         |> process_matching(game_state)
@@ -165,8 +184,8 @@ defmodule Memoart.Game do
     end
   end
 
-  def rotate_cards(game_state, player_name) do
-    rotation = case Map.fetch(game_state.rotation, player_name) do
+  def rotate_cards(game_state, player_id) do
+    rotation = case Map.fetch(game_state.rotation, player_id) do
       {:ok, rotation} -> rotation
       :error -> 0
     end
@@ -190,7 +209,7 @@ defmodule Memoart.Game do
   defp end_round(game_state, round_id) do
     # Set current_player
     # Set current_round
-    # Set state
-    %{game_state | state: :round_1}
+    # Set state to next round
+    %{game_state | state: :round_1, current_player_id: 0, alive_players: game_state.players}
   end
 end
