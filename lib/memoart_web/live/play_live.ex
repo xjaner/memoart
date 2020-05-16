@@ -5,16 +5,16 @@ defmodule MemoartWeb.PlayLive do
   alias MemoartWeb.Presence
   alias Phoenix.Socket.Broadcast
 
-  def mount(_params, %{"game_id" => game_id, "player_id" => player_id}, socket) do
+  def mount(_params, %{"game_id" => game_id, "player_name" => player_name}, socket) do
     game_name = "game:#{game_id}"
     if connected?(socket), do: subscribe(game_name)
 
-    game_state = Memoart.Game.get_game_session(game_name, player_id)
+    game_state = Memoart.Game.get_game_session(game_name, player_name)
     IO.puts("Getting #{game_name} game state'")
 
     socket = assign(socket,
       game_name: game_name,
-      player_id: player_id,
+      player_name: player_name,
     )
 
     socket = set_game_state(socket, game_state)
@@ -23,7 +23,7 @@ defmodule MemoartWeb.PlayLive do
     Presence.track(
       self(),
       game_name,
-      player_id,
+      player_name,
       %{}
     )
 
@@ -39,9 +39,9 @@ defmodule MemoartWeb.PlayLive do
   end
 
   def handle_event("card_click_" <> card_id, _,socket) do
-    %{game_name: game_name, player_id: player_id} = socket.assigns
-    IO.puts("card_click_#{card_id} by player #{player_id} in game #{game_name}")
-    new_state = Memoart.Session.card_click(game_name, card_id, player_id)
+    %{game_name: game_name, player_name: player_name} = socket.assigns
+    IO.puts("card_click_#{card_id} by player #{player_name} in game #{game_name}")
+    new_state = Memoart.Session.card_click(game_name, card_id, player_name)
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
     socket = set_game_state(socket, new_state)
     IO.puts("card_click_#{card_id} processed")
@@ -76,7 +76,7 @@ defmodule MemoartWeb.PlayLive do
       :timer.cancel(tref)
     end
 
-    {:noreply, set_game_state(socket, game_state)} 
+    {:noreply, set_game_state(socket, game_state)}
   end
 
   def handle_info(
@@ -88,7 +88,7 @@ defmodule MemoartWeb.PlayLive do
 
   defp set_game_state(socket, game_state) do
     %Memoart.Game{state: state, current_player: current_player, current_round: current_round, last_card: last_card, points: points, error: error, countdown: countdown} = game_state
-    cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_id)
+    cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_name)
     assign(
       socket,
       state: state,

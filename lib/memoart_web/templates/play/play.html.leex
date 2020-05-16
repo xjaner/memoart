@@ -1,6 +1,6 @@
 <div class="title">
 <h2>Juga al Memoart!</h2>
-<h5>Ets el jugador <%= @player_id%>. A la partida hi ha <%= Enum.count(@points) %> jugador(s).</h5>
+<h5>Ets el jugador <%= @player_name%>. A la partida hi ha <%= Enum.count(@points) %> jugador(s).</h5>
 </div>
 <div class="msg">
   <%= if @state == :waiting and Enum.count(@points) > 1 do %><div class="start-button-div"><button class="startButton" phx-click="start_game">Comença la partida!</button></div><% end %>

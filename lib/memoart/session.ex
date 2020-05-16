@@ -13,9 +13,9 @@ defmodule Memoart.Session do
     |> GenServer.call(args)
   end
 
-  def card_click(game_name, card_id, player_id) do
+  def card_click(game_name, card_id, player_name) do
     game_name
-    |> call_function({:card_click, card_id, player_id})
+    |> call_function({:card_click, card_id, player_name})
   end
 
   def get_game_state(game_name) do
@@ -23,9 +23,9 @@ defmodule Memoart.Session do
     |> call_function({:get_state})
   end
 
-  def add_player(game_name, player_id) do
+  def add_player(game_name, player_name) do
     game_name
-    |> call_function({:add_player, player_id})
+    |> call_function({:add_player, player_name})
   end
 
   def start_game(game_name) do
@@ -44,14 +44,14 @@ defmodule Memoart.Session do
   end
 
   @impl GenServer
-  def handle_call({:add_player, player_id}, _from, state) do
-    new_state = Memoart.Game.add_player(state, player_id)
+  def handle_call({:add_player, player_name}, _from, state) do
+    new_state = Memoart.Game.add_player(state, player_name)
     {:reply, new_state, new_state}
   end
 
   @impl GenServer
-  def handle_call({:card_click, card_id, player_id}, _from, state) do
-    new_state = Memoart.Game.card_click(state, card_id, player_id)
+  def handle_call({:card_click, card_id, player_name}, _from, state) do
+    new_state = Memoart.Game.card_click(state, card_id, player_name)
     {:reply, new_state, new_state}
   end
 
