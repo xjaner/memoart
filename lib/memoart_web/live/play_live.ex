@@ -2,6 +2,7 @@ defmodule MemoartWeb.PlayLive do
   use MemoartWeb, :live_view
 
   alias MemoartWeb.PlayView
+  alias MemoartWeb.Presence
   alias Phoenix.Socket.Broadcast
 
   def mount(_params, %{"game_id" => game_id, "player_id" => player_id}, socket) do
@@ -10,15 +11,21 @@ defmodule MemoartWeb.PlayLive do
 
     game_state = Memoart.Game.get_game_session(game_name, player_id)
     IO.puts("Getting #{game_name} game state'")
-    IO.inspect(game_state.points)
 
     socket = assign(socket,
       game_name: game_name,
-      player_id: player_id
+      player_id: player_id,
     )
 
     socket = set_game_state(socket, game_state)
-    IO.inspect(game_state.points)
+    MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", game_state)
+
+    Presence.track(
+      self(),
+      game_name,
+      player_id,
+      %{}
+    )
 
     {:ok, socket}
   end
@@ -41,30 +48,57 @@ defmodule MemoartWeb.PlayLive do
     {:noreply, socket}
   end
 
+  def handle_event("start_game", _, socket) do
+    %{game_name: game_name} = socket.assigns
+    game_state = Memoart.Session.start_game(game_name)
+
+    # Set initial countdown value and call :decrement every second
+    {:ok, timer_ref} = :timer.send_interval(1_000, :decrement)
+    socket = assign(socket, :timer_ref, timer_ref)
+
+    MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", game_state)
+
+    {:noreply, set_game_state(socket, game_state)}
+  end
+
   def handle_info(%Broadcast{event: "refresh_state", payload: game_state}, socket) do
     {:noreply, set_game_state(socket, game_state)}
   end
 
-  def handle_info(
-        %{event: "presence_diff", payload: %{joins: joins, leaves: leaves}},
-        %{assigns: %{reader_count: count}} = socket
-      ) do
-    reader_count = count + map_size(joins) - map_size(leaves)
+  def handle_info(:decrement, socket) do
+    %{game_name: game_name} = socket.assigns
+    game_state = Memoart.Session.decrement_countdown(game_name)
 
-    {:noreply, assign(socket, :reader_count, reader_count)}
+    MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", game_state)
+
+    if game_state.countdown <= 0 do
+      tref = socket.assigns[:timer_ref]
+      :timer.cancel(tref)
+    end
+
+    {:noreply, set_game_state(socket, game_state)} 
+  end
+
+  def handle_info(
+        %{event: "presence_diff", payload: %{joins: joins, leaves: leaves}}, socket
+      ) do
+    # TODO: Handle users that leave
+    {:noreply, socket}
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player: current_player, last_card: last_card, points: points, error: error} = game_state
+    %Memoart.Game{state: state, current_player: current_player, current_round: current_round, last_card: last_card, points: points, error: error, countdown: countdown} = game_state
     cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_id)
     assign(
       socket,
       state: state,
       current_player: current_player,
+      current_round: current_round,
       last_card: last_card,
       cards: cards,
       points: points,
-      error: error
+      error: error,
+      countdown: countdown
     )
   end
 

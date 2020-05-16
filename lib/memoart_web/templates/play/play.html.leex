@@ -1,5 +1,12 @@
-<h3>Juga al Memoart!</h3>
+<div class="title">
+<h2>Juga al Memoart!</h2>
 <h5>Ets el jugador <%= @player_id%>. A la partida hi ha <%= Enum.count(@points) %> jugador(s).</h5>
+</div>
+<div class="msg">
+  <%= if @state == :waiting and Enum.count(@points) > 1 do %><div class="start-button-div"><button class="startButton" phx-click="start_game">Comença la partida!</button></div><% end %>
+  <%= if String.starts_with?(Atom.to_string(@state), "round_") do %>És el torn de <strong><%= @current_player %></strong>.<% end %>
+  <%= if @state == :showing_first_line do %>La partida començarà d'aquí a <%= @countdown %> segons.<br>Ara observa bé les teves tres cartes obertes...<% end %>
+</div>
 <div class="container">
   <table class="board">
     <%= for {card_data, idx} <- Enum.with_index(@cards) do %>
