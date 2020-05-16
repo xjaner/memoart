@@ -15,22 +15,26 @@
       <%= if rem(idx,5) == 0 do %>
         <tr>
       <% end %>
-      <td class="card">
-        <div class="flip-container <%= card_data.flipped %>">
-          <div class="flipper">
-            <div class="front">
-              <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+        <td class="card">
+          <%= if idx == 12 do %>
+            <div class="middle-card"><%= if @round_points do %><span title="Aquesta ronda val <%= @round_points %> punt<%= if @round_points > 1 do %>s<% end %>"><div class="punts">1</div> Punt<%= if @round_points > 1 do %>s<% end %></span><% else %><span>Memoart</span><% end %></div>
+          <% else %>
+            <div class="flip-container <%= card_data.flipped %>">
+              <div class="flipper">
+                <div class="front">
+                  <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+                </div>
+                <div class="back <%= card_data.painting %> <%= card_data.item %>">
+                  <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+                </div>
+              </div>
             </div>
-            <div class="back <%= card_data.painting %> <%= card_data.item %>">
-              <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
-            </div>
-          </div>
-        </div>
-      </td>
+        </td>
+      <% end %>
       <%= if rem(idx,5) == 4 do %>
           </tr>
+        <% end %>
       <% end %>
-    <% end %>
   </table>
   <%= if MemoartWeb.PlayLive.error(assigns) do %>
     <div class="splash">

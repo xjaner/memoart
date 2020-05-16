@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, alive_players: []
+  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, alive_players: [], round_points: nil
 
   # States:
   # - waiting
@@ -15,7 +15,8 @@ defmodule Memoart.Game do
 
   @num_cards 25
   @max_players 4
-  @countdown_seconds 15
+  @countdown_seconds 4
+  # @countdown_seconds 15
 
 
   @items [
@@ -46,6 +47,16 @@ defmodule Memoart.Game do
     1 => [23, 22, 21],
     2 => [15, 10, 5],
     3 => [9, 14, 19]
+  }
+
+  @points_per_round %{
+    1 => 1,
+    2 => 1,
+    3 => 2,
+    4 => 2,
+    5 => 2,
+    6 => 3,
+    7 => 4,
   }
 
   defp item_pos([], _) do
@@ -225,8 +236,9 @@ defmodule Memoart.Game do
   defp end_round(game_state, round_id) do
     # Set current_player
     # Set current_round
-    # Set state to next round
-    %{game_state | state: :round_1, current_player_id: 0, alive_players: game_state.players}
+    next_round = String.to_atom("round_#{round_id + 1}")
+    round_points = Map.get(@points_per_round, round_id + 1)
+    %{game_state | state: next_round, current_player_id: 0, round_points: round_points, alive_players: game_state.players}
   end
 
   def show_first_line_if_needed(state, cards, player_id) do

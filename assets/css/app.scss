@@ -364,3 +364,19 @@ transform: rotateY(180deg);
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
+.middle-card {
+    background-color: #407bdb;
+    font-size:2vw;
+    backface-visibility: hidden;
+    height: 100%;
+    border-radius: 5px;
+    border: 1px solid #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.middle-card .punts {
+  font-size:4vw;
+  text-align: center;
+}
