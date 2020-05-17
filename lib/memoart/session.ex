@@ -27,6 +27,11 @@ defmodule Memoart.Session do
     game_name
     |> call_function({:add_player, player_name})
   end
+ 
+  def next_player(game_name) do
+    game_name
+    |> call_function({:next_player})
+  end
 
   def start_game(game_name) do
     game_name
@@ -50,10 +55,16 @@ defmodule Memoart.Session do
   end
 
   @impl GenServer
-  def handle_call({:card_click, card_id, player_id}, _from, state) do
-    new_state = state
-    |> Memoart.Game.card_click(card_id, player_id)
+  def handle_call({:next_player}, _from, state) do
+    new_state = Memoart.Game.next_player(state)
     {:reply, new_state, new_state}
+  end
+
+  @impl GenServer
+  def handle_call({:card_click, card_id, player_id}, _from, state) do
+    {result, new_state} = state
+    |> Memoart.Game.card_click(card_id, player_id)
+    {:reply, {result, new_state}, new_state}
   end
 
   @impl GenServer

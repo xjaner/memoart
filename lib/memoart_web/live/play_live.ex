@@ -41,12 +41,19 @@ defmodule MemoartWeb.PlayLive do
 
   def handle_event("card_click_" <> card_id, _,socket) do
     %{game_name: game_name, player_name: player_name, player_id: player_id} = socket.assigns
-    IO.puts("card_click_#{card_id} by player #{player_name} in game #{game_name}")
-    new_state = Memoart.Session.card_click(game_name, card_id, player_id)
+
+    {result, new_state} = Memoart.Session.card_click(game_name, card_id, player_id)
+    IO.puts("card_click_#{card_id} by player #{player_name} in game #{game_name}: #{result}.")
+
+    new_state = case result do
+      :ok -> Memoart.Session.next_player(game_name)
+      _ -> new_state
+      # si result és no_match cridar XXX d'aqui a 1 segon
+    end
+
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
-    socket = set_game_state(socket, new_state)
-    IO.puts("card_click_#{card_id} processed")
-    {:noreply, socket}
+
+    {:noreply, set_game_state(socket, new_state)}
   end
 
   def handle_event("start_game", _, socket) do
@@ -88,7 +95,7 @@ defmodule MemoartWeb.PlayLive do
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card: last_card, points: points, error: error, countdown: countdown, round_points: round_points} = game_state
+    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card_id: last_card_id, points: points, error: error, countdown: countdown, round_points: round_points, round_message: round_message} = game_state
     cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_name)
     cards = Memoart.Game.show_first_line_if_needed(state, cards, socket.assigns.player_id)
     assign(
@@ -97,12 +104,13 @@ defmodule MemoartWeb.PlayLive do
       current_player: Enum.at(game_state.players, current_player_id || 0),  # I need to pass a default value in case current_player_id is nil
       current_player_id: current_player_id,
       current_round: current_round,
-      last_card: last_card,
+      last_card_id: last_card_id,
       cards: cards,
       points: points,
       error: error,
       countdown: countdown,
-      round_points: round_points
+      round_points: round_points,
+      round_message: round_message
     )
   end
 

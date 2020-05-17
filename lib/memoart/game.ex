@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, alive_players: [], round_points: nil
+  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card_id: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, alive_players: [], round_points: nil, last_player_id: nil, round_message: nil
 
   # States:
   # - waiting
@@ -200,14 +200,38 @@ defmodule Memoart.Game do
   end
 
   def card_click(%{cards: cards, current_player_id: current_player_id} = game_state, card_id, player_id) do
+    IO.puts("[Game.card_click] current_player_id: #{current_player_id} - player_id: #{player_id} - card_id: #{card_id}")
     case current_player_id do
       ^player_id ->
         cards
         |> Enum.map(&(flip_card(&1, String.to_integer(card_id))))
         |> process_matching(game_state)
-        |> next_player()
+        |> validate_card(card_id)
 
-      _ -> game_state
+      _ -> {:wrong_player, game_state}
+    end
+  end
+
+  defp validate_card(game_state, card_id) do
+    {result, game_state} = case game_state.last_card_id do
+      nil -> {:ok, game_state}
+      last_card_id -> validate_two_cards(game_state, last_card_id, card_id)
+    end
+    game_state = %{game_state | last_card_id: card_id}
+    {result, game_state}
+  end
+
+  defp validate_two_cards(game_state, last_card_id, current_card_id) do
+    last = Enum.at(game_state.cards, String.to_integer(last_card_id))
+    current = Enum.at(game_state.cards, String.to_integer(current_card_id))
+    cond do
+      last.item == current.item or last.painting == current.painting ->
+        {:ok, game_state}
+
+      true ->
+        game_state = %{game_state | round_message: "La carta no és vàlida!"}
+        # TODO: Trure current_player de la llista dels que queden vius
+        {:no_match, game_state}
     end
   end
 

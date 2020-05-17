@@ -3,11 +3,25 @@
 <h5>Ets el jugador <%= @player_name%>. A la partida hi ha <%= Enum.count(@points) %> jugador(s).</h5>
 </div>
 <div class="msg">
-  <%= if @state == :waiting and Enum.count(@points) > 1 do %><div class="start-button-div"><button class="startButton" phx-click="start_game">Comença la partida!</button></div><% end %>
+  <%= if @state == :waiting and Enum.count(@points) > 1 do %>
+    <div class="start-button-div">
+      <button class="startButton" phx-click="start_game">Comença la partida!</button>
+    </div>
+  <% end %>
   <%= if String.starts_with?(Atom.to_string(@state), "round_") do %>
-    <%= if @current_player_id == @player_id do %>És el teu torn!<br>Tria una carta...<% else %>És el torn de <strong><%= @current_player %> (<%= @current_player_id %>)</strong>.<% end %>
+    <%= if @round_message do %>
+      <div class="round-message">
+      <%= @round_message %>
+      </div>
+    <% else %>
+      <%= if @current_player_id == @player_id do %>
+        És el teu torn!<br>Tria una carta...<% else %>És el torn de <strong><%= @current_player %> (<%= @current_player_id %>)</strong>.
+      <% end %>
     <% end %>
-  <%= if @state == :showing_first_line do %>La partida començarà d'aquí a <%= @countdown %> segons.<br>Ara observa bé les teves tres cartes obertes...<% end %>
+  <% end %>
+  <%= if @state == :showing_first_line do %>
+    La partida començarà d'aquí a <%= @countdown %> segons.<br>Ara observa bé les teves tres cartes obertes...
+  <% end %>
 </div>
 <div class="container">
   <table class="board">
