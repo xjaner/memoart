@@ -31,7 +31,16 @@
       <% end %>
         <td class="card">
           <%= if idx == 12 do %>
-            <div class="middle-card"><%= if @round_points do %><span title="Aquesta ronda val <%= @round_points %> punt<%= if @round_points > 1 do %>s<% end %>"><div class="punts">1</div> Punt<%= if @round_points > 1 do %>s<% end %></span><% else %><span>Memoart</span><% end %></div>
+            <div class="middle-card">
+              <%= if @round_points do %>
+                <span title="Aquesta ronda val <%= @round_points %> punt<%= if @round_points > 1 do %>s<% end %>">
+                  Ronda <%= @current_round %> / 7
+                  <div class="punts">1 Punt<%= if @round_points > 1 do %>s<% end %></div>
+                </span>
+              <% else %>
+                  <span>Memoart</span>
+              <% end %>
+            </div>
           <% else %>
             <div class="flip-container <%= card_data.flipped %>">
               <div class="flipper">
@@ -57,7 +66,7 @@
         <div class="joined">
           <h1><%= @error %></h1>
         </div>
-        <a href="/" class="icon-padding action-button animate purple">Try Again</a>
+        <a href="/" class="icon-padding action-button animate purple">Vés a l'inici</a>
       </div>
     </div>
   <% end %>

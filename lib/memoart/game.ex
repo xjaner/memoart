@@ -15,8 +15,7 @@ defmodule Memoart.Game do
 
   @num_cards 25
   @max_players 4
-  @countdown_seconds 4
-  # @countdown_seconds 15
+  @countdown_seconds 15
 
 
   @items [
@@ -103,13 +102,13 @@ defmodule Memoart.Game do
 
   defp add_player_to_points_and_rotation(game_state, player_name) do
     game_state
-    |> add_player_to_points(player_name)
+    |> add_player_to_points()
     |> add_player_to_rotation(player_name)
     |> add_player_to_players(player_name)
   end
 
-  defp add_player_to_points(game_state, player_name) do
-    %{game_state | points: Map.put_new(game_state.points, player_name, 0)}
+  defp add_player_to_points(game_state) do
+    %{game_state | points: Map.put_new(game_state.points, Enum.count(game_state.players), 0)}
   end
 
   defp add_player_to_rotation(game_state, player_name) do
@@ -262,7 +261,13 @@ defmodule Memoart.Game do
     # Set current_round
     next_round = String.to_atom("round_#{round_id + 1}")
     round_points = Map.get(@points_per_round, round_id + 1)
-    %{game_state | state: next_round, current_player_id: 0, round_points: round_points, active_players: Enum.to_list(0..Enum.count(game_state.players)-1)}
+    %{game_state |
+      state: next_round,
+      current_player_id: 0,
+      round_points: round_points,
+      current_round: 1,
+      active_players: Enum.to_list(0..Enum.count(game_state.players)-1)
+    }
   end
 
   def show_first_line_if_needed(state, cards, player_id) do
@@ -279,25 +284,59 @@ defmodule Memoart.Game do
     %{state | current_player_id: rem(state.current_player_id + 1, Enum.count(state.active_players))}
   end
 
-  def finish(state) do
-    state
+  def get_winner_id(state) do
+    {winner_id, _} = state.points
+    |> Enum.to_list
+    |> Enum.sort_by(&(elem(&1, 1)), :desc)
+    |> Enum.at(0)
+    winner_id
   end
 
-  def next_round(state) do
+  def finish(state) do
+    # TODO: Kill game_name process
+    winner_id = get_winner_id(state)
+    final_message = "Final de la patida!<br>El guanyador és #{Enum.at(state.players, winner_id)}"
+    %{state | error: final_message}
+  end
+
+  def reset_board(state) do
+    %{state | cards: Enum.map(state.cards, fn card -> %{card | flipped: ""} end)}
+  end
+
+  def add_points(state, player_id) do
+    IO.puts("add_points(#{player_id}) - current_round: #{state.current_round}")
+    state = %{state | points: Map.update!(state.points, player_id, &(&1 + @points_per_round[state.current_round]))}
+    next_round_id = state.current_round + 1
+    case next_round_id do
+      8 ->
+        finish(state)
+      _ ->
+        %{state |
+          state: String.to_atom("round_#{next_round_id}"),
+          current_round: next_round_id,
+          round_points: @points_per_round[next_round_id],
+          active_players: Enum.to_list(0..Enum.count(state.players)-1),
+          current_player_id: rem(player_id + 1, Enum.count(state.players)),
+          round_message: nil,
+          last_card_id: nil
+        }
+        |> reset_board()
+    end
+  end
+
+  def next_round(state, player_id) do
+    [winner_id] = state.active_players -- [player_id]
     state
+    |> add_points(player_id)
   end
 
   defp remove_player(game_state, player_id) do
-    IO.puts("remove_player: before")
-    IO.inspect(game_state.active_players)
     dead_player_pos = get_item_pos(game_state.active_players, player_id)
     game_state = %{game_state |
       active_players: game_state.active_players -- [player_id],
       round_message: nil
     }
-    IO.puts("remove_player: after - dead_player_pos: #{dead_player_pos}")
-    IO.inspect(game_state.active_players)
-    game_state = %{game_state | current_player_id: Enum.at(game_state.active_players, rem(dead_player_pos, Enum.count(game_state.active_players)))}
+    %{game_state | current_player_id: Enum.at(game_state.active_players, rem(dead_player_pos, Enum.count(game_state.active_players)))}
   end
 
   def no_match(state, player_id) do
@@ -307,6 +346,7 @@ defmodule Memoart.Game do
         |> remove_player(player_id)
       true ->
         state
+        |> next_round(player_id)
     end
   end
 end
