@@ -295,7 +295,7 @@ defmodule Memoart.Game do
   def finish(state) do
     # TODO: Kill game_name process
     winner_id = get_winner_id(state)
-    final_message = "Final de la patida!<br>El guanyador és #{Enum.at(state.players, winner_id)}"
+    final_message = "Final de la partida! El guanyador és #{Enum.at(state.players, winner_id)}"
     %{state | error: final_message}
   end
 
@@ -303,9 +303,9 @@ defmodule Memoart.Game do
     %{state | cards: Enum.map(state.cards, fn card -> %{card | flipped: ""} end)}
   end
 
-  def add_points(state, player_id) do
-    IO.puts("add_points(#{player_id}) - current_round: #{state.current_round}")
-    state = %{state | points: Map.update!(state.points, player_id, &(&1 + @points_per_round[state.current_round]))}
+  def add_points(state, last_player_id, winner_id) do
+    IO.puts("add_points(#{last_player_id}, #{winner_id}) - current_round: #{state.current_round}")
+    state = %{state | points: Map.update!(state.points, winner_id, &(&1 + @points_per_round[state.current_round]))}
     next_round_id = state.current_round + 1
     case next_round_id do
       8 ->
@@ -316,7 +316,7 @@ defmodule Memoart.Game do
           current_round: next_round_id,
           round_points: @points_per_round[next_round_id],
           active_players: Enum.to_list(0..Enum.count(state.players)-1),
-          current_player_id: rem(player_id + 1, Enum.count(state.players)),
+          current_player_id: rem(last_player_id + 1, Enum.count(state.players)),
           round_message: nil,
           last_card_id: nil
         }
@@ -327,7 +327,7 @@ defmodule Memoart.Game do
   def next_round(state, player_id) do
     [winner_id] = state.active_players -- [player_id]
     state
-    |> add_points(player_id)
+    |> add_points(player_id, winner_id)
   end
 
   defp remove_player(game_state, player_id) do

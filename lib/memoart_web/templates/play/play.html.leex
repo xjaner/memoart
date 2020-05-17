@@ -15,7 +15,7 @@
       </div>
     <% else %>
       <%= if @current_player_id == @player_id do %>
-        És el teu torn!<br>Tria una carta...<% else %>És el torn de <strong><%= @current_player %> (<%= @current_player_id %>)</strong>.
+        És el teu torn!<br>Tria una carta...<% else %>És el torn de <strong><%= @current_player %></strong>.
       <% end %>
     <% end %>
   <% end %>
@@ -35,7 +35,7 @@
               <%= if @round_points do %>
                 <span title="Aquesta ronda val <%= @round_points %> punt<%= if @round_points > 1 do %>s<% end %>">
                   Ronda <%= @current_round %> / 7
-                  <div class="punts">1 Punt<%= if @round_points > 1 do %>s<% end %></div>
+                  <div class="punts"><%= @round_points %> Punt<%= if @round_points > 1 do %>s<% end %></div>
                 </span>
               <% else %>
                   <span>Memoart</span>
