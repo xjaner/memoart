@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card_id: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, alive_players: [], round_points: nil, last_player_id: nil, round_message: nil
+  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card_id: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, active_players: [], round_points: nil, last_player_id: nil, round_message: nil
 
   # States:
   # - waiting
@@ -70,6 +70,7 @@ defmodule Memoart.Game do
     end
   end
 
+  # TODO: Make a get_item_pos! variant
   defp get_item_pos(l, item) do
     item_pos(Enum.with_index(l), item)
   end
@@ -229,8 +230,7 @@ defmodule Memoart.Game do
         {:ok, game_state}
 
       true ->
-        game_state = %{game_state | round_message: "La carta no és vàlida!"}
-        # TODO: Trure current_player de la llista dels que queden vius
+        game_state = %{game_state | current_player_id: nil, round_message: "La carta no és vàlida!"}
         {:no_match, game_state}
     end
   end
@@ -262,7 +262,7 @@ defmodule Memoart.Game do
     # Set current_round
     next_round = String.to_atom("round_#{round_id + 1}")
     round_points = Map.get(@points_per_round, round_id + 1)
-    %{game_state | state: next_round, current_player_id: 0, round_points: round_points, alive_players: game_state.players}
+    %{game_state | state: next_round, current_player_id: 0, round_points: round_points, active_players: Enum.to_list(0..Enum.count(game_state.players)-1)}
   end
 
   def show_first_line_if_needed(state, cards, player_id) do
@@ -276,6 +276,37 @@ defmodule Memoart.Game do
   end
 
   def next_player(state) do
-    %{state | current_player_id: rem(state.current_player_id + 1, Enum.count(state.players))}
+    %{state | current_player_id: rem(state.current_player_id + 1, Enum.count(state.active_players))}
+  end
+
+  def finish(state) do
+    state
+  end
+
+  def next_round(state) do
+    state
+  end
+
+  defp remove_player(game_state, player_id) do
+    IO.puts("remove_player: before")
+    IO.inspect(game_state.active_players)
+    dead_player_pos = get_item_pos(game_state.active_players, player_id)
+    game_state = %{game_state |
+      active_players: game_state.active_players -- [player_id],
+      round_message: nil
+    }
+    IO.puts("remove_player: after - dead_player_pos: #{dead_player_pos}")
+    IO.inspect(game_state.active_players)
+    game_state = %{game_state | current_player_id: Enum.at(game_state.active_players, rem(dead_player_pos, Enum.count(game_state.active_players)))}
+  end
+
+  def no_match(state, player_id) do
+    cond do
+      Enum.count(state.active_players) > 2 ->
+        state
+        |> remove_player(player_id)
+      true ->
+        state
+    end
   end
 end

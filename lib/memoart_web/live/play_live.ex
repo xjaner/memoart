@@ -47,6 +47,9 @@ defmodule MemoartWeb.PlayLive do
 
     new_state = case result do
       :ok -> Memoart.Session.next_player(game_name)
+      :no_match -> 
+        Process.send_after(self, %{event: "no_match", player_id: player_id}, 5_000)
+        new_state
       _ -> new_state
       # si result és no_match cridar XXX d'aqui a 1 segon
     end
@@ -85,6 +88,15 @@ defmodule MemoartWeb.PlayLive do
     end
 
     {:noreply, set_game_state(socket, game_state)}
+  end
+
+  def handle_info(%{event: "no_match", player_id: player_id}, socket) do
+    %{game_name: game_name} = socket.assigns
+
+    new_state = Memoart.Session.no_match(game_name, player_id)
+    MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
+
+    {:noreply, set_game_state(socket, new_state)}
   end
 
   def handle_info(

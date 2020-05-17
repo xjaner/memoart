@@ -28,6 +28,11 @@ defmodule Memoart.Session do
     |> call_function({:add_player, player_name})
   end
  
+  def no_match(game_name, player_id) do
+    game_name
+    |> call_function({:no_match, player_id})
+  end
+ 
   def next_player(game_name) do
     game_name
     |> call_function({:next_player})
@@ -52,6 +57,12 @@ defmodule Memoart.Session do
   def handle_call({:add_player, player_name}, _from, state) do
     {new_state, player_id} = Memoart.Game.add_player(state, player_name)
     {:reply, {new_state, player_id}, new_state}
+  end
+
+  @impl GenServer
+  def handle_call({:no_match, player_id}, _from, state) do
+    new_state = Memoart.Game.no_match(state, player_id)
+    {:reply, new_state, new_state}
   end
 
   @impl GenServer
