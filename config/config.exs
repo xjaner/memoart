@@ -7,8 +7,8 @@
 # General application configuration
 use Mix.Config
 
-config :memoart,
-  ecto_repos: [Memoart.Repo]
+# config :memoart,
+#   ecto_repos: [Memoart.Repo]
 
 # Configures the endpoint
 config :memoart, MemoartWeb.Endpoint,
