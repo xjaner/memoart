@@ -70,7 +70,7 @@ defmodule Memoart.Game do
   end
 
   # TODO: Make a get_item_pos! variant
-  defp get_item_pos(l, item) do
+  def get_item_pos(l, item) do
     item_pos(Enum.with_index(l), item)
   end
 
