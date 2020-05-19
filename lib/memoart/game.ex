@@ -307,6 +307,9 @@ defmodule Memoart.Game do
     IO.puts("add_points(#{last_player_id}, #{winner_id}) - current_round: #{state.current_round}")
     state = %{state | points: Map.update!(state.points, winner_id, &(&1 + @points_per_round[state.current_round]))}
     next_round_id = state.current_round + 1
+    active_players = Enum.to_list(0..Enum.count(state.players) - 1)
+    next_player = Enum.random(active_players -- [winner_id])
+
     case next_round_id do
       8 ->
         finish(state)
@@ -315,8 +318,8 @@ defmodule Memoart.Game do
           state: String.to_atom("round_#{next_round_id}"),
           current_round: next_round_id,
           round_points: @points_per_round[next_round_id],
-          active_players: Enum.to_list(0..Enum.count(state.players)-1),
-          current_player_id: rem(last_player_id + 1, Enum.count(state.players)),
+          active_players: active_players,
+          current_player_id: next_player,
           round_message: nil,
           last_card_id: nil
         }
