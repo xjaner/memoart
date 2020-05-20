@@ -16,6 +16,7 @@ defmodule Memoart.Game do
   @num_cards 25
   @max_players 4
   @countdown_seconds 15
+  @finish_round 8
 
 
   @items [
@@ -296,7 +297,7 @@ defmodule Memoart.Game do
     # TODO: Kill game_name process
     winner_id = get_winner_id(state)
     final_message = "Final de la partida! El guanyador és #{Enum.at(state.players, winner_id)}"
-    %{state | error: final_message}
+    %{state | error: final_message, state: :finished}
   end
 
   def reset_board(state) do
@@ -311,7 +312,7 @@ defmodule Memoart.Game do
     next_player = Enum.random(active_players -- [winner_id])
 
     case next_round_id do
-      8 ->
+      @finish_round ->
         finish(state)
       _ ->
         %{state |

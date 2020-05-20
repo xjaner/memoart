@@ -13,6 +13,13 @@ defmodule Memoart.Session do
     |> GenServer.call(args)
   end
 
+  def kill_game(game_name) do
+    game_name
+    |> String.to_atom()
+    |> Process.whereis()
+    |> Process.exit(:kill)
+  end
+
   def card_click(game_name, card_id, player_id) do
     game_name
     |> call_function({:card_click, card_id, player_id})

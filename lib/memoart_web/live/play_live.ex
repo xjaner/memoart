@@ -93,6 +93,11 @@ defmodule MemoartWeb.PlayLive do
     %{game_name: game_name} = socket.assigns
 
     new_state = Memoart.Session.no_match(game_name, player_id)
+
+    if new_state.state == :finished do
+      Memoart.Session.kill_game(game_name)
+    end
+
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
 
     {:noreply, set_game_state(socket, new_state)}
