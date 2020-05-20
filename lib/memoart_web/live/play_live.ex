@@ -93,8 +93,6 @@ defmodule MemoartWeb.PlayLive do
     %{game_name: game_name} = socket.assigns
 
     new_state = Memoart.Session.no_match(game_name, player_id)
-    IO.puts("new_state processed")
-    IO.inspect(new_state)
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
 
     {:noreply, set_game_state(socket, new_state)}
@@ -108,7 +106,7 @@ defmodule MemoartWeb.PlayLive do
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card_id: last_card_id, points: points, error: error, countdown: countdown, round_points: round_points, round_message: round_message} = game_state
+    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card_id: last_card_id, points: points, error: error, countdown: countdown, round_points: round_points, round_message: round_message, players: players} = game_state
     cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_name)
     cards = Memoart.Game.show_first_line_if_needed(state, cards, socket.assigns.player_id)
     assign(
@@ -120,6 +118,7 @@ defmodule MemoartWeb.PlayLive do
       last_card_id: last_card_id,
       cards: cards,
       points: points,
+      players: players,
       error: error,
       countdown: countdown,
       round_points: round_points,

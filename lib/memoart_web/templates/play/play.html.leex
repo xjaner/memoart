@@ -71,3 +71,11 @@
     </div>
   <% end %>
 </div>
+<div id="points-mobile">
+  <h4>Puntuació</h4>
+  <ul>
+  <%= for {id, player_points} <- @points do %>
+    <li><strong><%= Enum.at(@players, id) %>:</strong> <%= player_points %> punts</li>
+  <% end %>
+  </ul>
+</div>

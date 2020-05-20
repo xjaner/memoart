@@ -8,6 +8,15 @@ body {
   font-family: 'Avenir Next', Helvetica, Verdana, Arial, sans-serif;
 }
 
+#points-mobile {display:none;}
+
+@media only screen and (max-width: 600px) {
+  #points-mobile {
+    width: 60%;
+    margin: 20px;;
+    display: block;
+  }
+}
 
 .title {
   width: 80%;
@@ -385,3 +394,4 @@ transform: rotateY(180deg);
   font-size:4vw;
   text-align: center;
 }
+
