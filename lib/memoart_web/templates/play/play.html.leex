@@ -1,6 +1,6 @@
 <div class="title">
-<h2>Juga al Memoart!</h2>
-<h5>Ets el jugador <%= @player_name%>. A la partida hi ha <%= Enum.count(@points) %> jugador(s).</h5>
+  <h2>Juga al Memoart!</h2>
+  <h5>Ets el jugador <%= @player_name%>. A la partida hi ha <%= Enum.count(@points) %> jugador<%= if Enum.count(@points) > 1 do %>s<% end %>.</h5>
 </div>
 <div class="msg">
   <%= if @state == :waiting and Enum.count(@points) > 1 do %>
@@ -11,71 +11,77 @@
   <%= if String.starts_with?(Atom.to_string(@state), "round_") do %>
     <%= if @round_message do %>
       <div class="round-message">
-      <%= @round_message %>
+        <%= @round_message %>
       </div>
     <% else %>
       <%= if @current_player_id == @player_id do %>
         És el teu torn!<br>Tria una carta...<% else %>És el torn de <strong><%= @current_player %></strong>.
-      <% end %>
-    <% end %>
-  <% end %>
-  <%= if @state == :showing_first_line do %>
-    La partida començarà d'aquí a <%= @countdown %> segons.<br>Ara observa bé les teves tres cartes obertes...
-  <% end %>
-</div>
-<div class="container">
-  <table class="board">
-    <%= for {card_data, idx} <- Enum.with_index(@cards) do %>
-      <%= if rem(idx,5) == 0 do %>
-        <tr>
-      <% end %>
-        <td class="card">
-          <%= if idx == 12 do %>
-            <div class="middle-card">
-              <%= if @round_points do %>
-                <span title="Aquesta ronda val <%= @round_points %> punt<%= if @round_points > 1 do %>s<% end %>">
-                  Ronda <%= @current_round %> / 7
-                  <div class="punts"><%= @round_points %> Punt<%= if @round_points > 1 do %>s<% end %></div>
-                </span>
-              <% else %>
-                  <span>Memoart</span>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="flip-container <%= card_data.flipped %>">
-              <div class="flipper">
-                <div class="front">
-                  <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
-                </div>
-                <div class="back <%= card_data.painting %> <%= card_data.item %>">
-                  <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
-                </div>
-              </div>
-            </div>
-        </td>
-      <% end %>
-      <%= if rem(idx,5) == 4 do %>
-          </tr>
         <% end %>
       <% end %>
-  </table>
-  <%= if MemoartWeb.PlayLive.error(assigns) do %>
-    <div class="splash">
-      <div class="overlay"></div>
-      <div class="content">
-        <div class="joined">
-          <h1><%= @error %></h1>
-        </div>
-        <a href="/" class="icon-padding action-button animate purple">Vés a l'inici</a>
-      </div>
-    </div>
-  <% end %>
+    <% end %>
+    <%= if @state == :showing_first_line do %>
+      La partida començarà d'aquí a <%= @countdown %> segons.<br>Ara observa bé les teves tres cartes obertes...
+    <% end %>
 </div>
-<div id="points-mobile">
-  <h4>Puntuació</h4>
-  <ul>
-  <%= for {id, player_points} <- @points do %>
-    <li><strong><%= Enum.at(@players, id) %>:</strong> <%= player_points %> punts</li>
-  <% end %>
-  </ul>
+<div class="row">
+  <div class="col-9">
+    <div class="container">
+      <table class="board">
+        <%= for {card_data, idx} <- Enum.with_index(@cards) do %>
+          <%= if rem(idx,5) == 0 do %>
+            <tr>
+            <% end %>
+            <td class="card">
+              <%= if idx == 12 do %>
+                <div class="middle-card">
+                  <%= if @round_points do %>
+                    <span title="Aquesta ronda val <%= @round_points %> punt<%= if @round_points > 1 do %>s<% end %>">
+                      Ronda <%= @current_round %> / 7
+                      <div class="punts"><%= @round_points %> Punt<%= if @round_points > 1 do %>s<% end %></div>
+                    </span>
+                  <% else %>
+                    <span>Memoart</span>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="flip-container <%= card_data.flipped %>">
+                  <div class="flipper">
+                    <div class="front">
+                      <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+                    </div>
+                    <div class="back <%= card_data.painting %> <%= card_data.item %>">
+                      <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+                    </div>
+                  </div>
+                </div>
+            </td>
+          <% end %>
+          <%= if rem(idx,5) == 4 do %>
+              </tr>
+            <% end %>
+          <% end %>
+      </table>
+      <%= if MemoartWeb.PlayLive.error(assigns) do %>
+        <div class="splash">
+          <div class="overlay"></div>
+          <div class="content">
+            <div class="joined">
+              <h1><%= @error %></h1>
+            </div>
+            <a href="/" class="icon-padding action-button animate purple">Vés a l'inici</a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-3">
+    <div id="points">
+      <h4>Puntuació</h4>
+      <ul>
+        <%= for {id, player_points} <- @points do %>
+          <li><strong><%= Enum.at(@players, id) %>:</strong> <%= player_points %> punts</li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
 </div>
