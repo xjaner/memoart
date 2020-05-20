@@ -19,11 +19,11 @@ defmodule Memoart.Game do
 
 
   @items [
+    "brush",
     "canvas",
     "palette",
-    "roller",
-    "splash",
-    "star"
+    "pencil",
+    "roller"
   ]
 
   @paintings [

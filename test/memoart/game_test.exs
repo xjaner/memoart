@@ -14,4 +14,16 @@ defmodule Memoart.GameTest do
   test "get_item_pos with a single-element list that doesn't match" do
     assert Game.get_item_pos(["b"], "a") == nil
   end
+
+  test "get_item_pos with multiple elements and item at the beginnig" do
+    assert Game.get_item_pos(["a", "b", "c", "d"], "a") == 0
+  end
+
+  test "get_item_pos with multiple elements and item in the middle" do
+    assert Game.get_item_pos(["b", "c", "a", "d", "e"], "a") == 2
+  end
+
+  test "get_item_pos with multiple elements and item at the end" do
+    assert Game.get_item_pos(["b", "c", "d", "e", "a"], "a") == 4
+  end
 end

@@ -85,8 +85,8 @@ perspective: 1000px;
     height: 100%
 }
 /* flip the pane when hovered */
-//.flip-container:hover .flipper, 
-    .flip-container.hover .flipper { //, 
+//.flip-container:hover .flipper,
+    .flip-container.hover .flipper { //,
     //.flip-container.flip .flipper {
 transform: rotateY(180deg);
 }
@@ -133,32 +133,32 @@ transform: rotateY(180deg);
 }
 
 /* images */
-.back.gernika.star {
-    background-image: url('/images/star.png'), url('/images/gernika.png');
+.back.gernika.brush {
+    background-image: url('/images/brush.png'), url('/images/gernika.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.kandinsky.star {
-    background-image: url('/images/star.png'), url('/images/kandinsky.png');
+.back.kandinsky.brush {
+    background-image: url('/images/brush.png'), url('/images/kandinsky.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.monet.star {
-    background-image: url('/images/star.png'), url('/images/monet.png');
+.back.monet.brush {
+    background-image: url('/images/brush.png'), url('/images/monet.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.rothko.star {
-    background-image: url('/images/star.png'), url('/images/rothko.png');
+.back.rothko.brush {
+    background-image: url('/images/brush.png'), url('/images/rothko.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.vangogh.star {
-    background-image: url('/images/star.png'), url('/images/vangogh.png');
+.back.vangogh.brush {
+    background-image: url('/images/brush.png'), url('/images/vangogh.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
@@ -196,93 +196,93 @@ transform: rotateY(180deg);
 }
 
 .back.gernika.palette {
-    background-image: url('/images/palette.svg'), url('/images/gernika.png');
+    background-image: url('/images/palette.png'), url('/images/gernika.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.kandinsky.palette {
-    background-image: url('/images/palette.svg'), url('/images/kandinsky.png');
+    background-image: url('/images/palette.png'), url('/images/kandinsky.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.monet.palette {
-    background-image: url('/images/palette.svg'), url('/images/monet.png');
+    background-image: url('/images/palette.png'), url('/images/monet.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.rothko.palette {
-    background-image: url('/images/palette.svg'), url('/images/rothko.png');
+    background-image: url('/images/palette.png'), url('/images/rothko.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.vangogh.palette {
-    background-image: url('/images/palette.svg'), url('/images/vangogh.png');
+    background-image: url('/images/palette.png'), url('/images/vangogh.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .back.gernika.roller {
-    background-image: url('/images/roller.svg'), url('/images/gernika.png');
+    background-image: url('/images/roller.png'), url('/images/gernika.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.kandinsky.roller {
-    background-image: url('/images/roller.svg'), url('/images/kandinsky.png');
+    background-image: url('/images/roller.png'), url('/images/kandinsky.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.monet.roller {
-    background-image: url('/images/roller.svg'), url('/images/monet.png');
+    background-image: url('/images/roller.png'), url('/images/monet.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.rothko.roller {
-    background-image: url('/images/roller.svg'), url('/images/rothko.png');
+    background-image: url('/images/roller.png'), url('/images/rothko.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 .back.vangogh.roller {
-    background-image: url('/images/roller.svg'), url('/images/vangogh.png');
+    background-image: url('/images/roller.png'), url('/images/vangogh.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.back.gernika.splash {
-    background-image: url('/images/splash.svg'), url('/images/gernika.png');
+.back.gernika.pencil {
+    background-image: url('/images/pencil.png'), url('/images/gernika.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.kandinsky.splash {
-    background-image: url('/images/splash.svg'), url('/images/kandinsky.png');
+.back.kandinsky.pencil {
+    background-image: url('/images/pencil.png'), url('/images/kandinsky.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.monet.splash {
-    background-image: url('/images/splash.svg'), url('/images/monet.png');
+.back.monet.pencil {
+    background-image: url('/images/pencil.png'), url('/images/monet.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.rothko.splash {
-    background-image: url('/images/splash.svg'), url('/images/rothko.png');
+.back.rothko.pencil {
+    background-image: url('/images/pencil.png'), url('/images/rothko.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
-.back.vangogh.splash {
-    background-image: url('/images/splash.svg'), url('/images/vangogh.png');
+.back.vangogh.pencil {
+    background-image: url('/images/pencil.png'), url('/images/vangogh.png');
     background-size: 50%, 100%;
     background-repeat: no-repeat;
     background-position: center;
