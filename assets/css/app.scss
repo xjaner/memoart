@@ -62,6 +62,12 @@ body {
   padding-bottom: 20px;
 }
 
+@media only screen and (max-width: 768px) {
+  .msg {
+    width: 80%;
+  }
+}
+
 .msg .start-button-div {
   text-align: center;
 }
@@ -433,3 +439,12 @@ transform: rotateY(180deg);
   text-align: center;
 }
 
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .middle-card {
+    font-size: 2vw;
+  }
+  .middle-card .punts {
+    font-size: 3vw;
+  }
+}
