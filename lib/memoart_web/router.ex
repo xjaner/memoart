@@ -1,6 +1,9 @@
 defmodule MemoartWeb.Router do
   use MemoartWeb, :router
 
+  import Plug.BasicAuth
+  import Phoenix.LiveDashboard.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -10,8 +13,16 @@ defmodule MemoartWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :admins_only do
+    plug :basic_auth, username: "admin", password: "m3m0art"
+  end
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/admin" do
+    pipe_through [:browser, :admins_only]
+    live_dashboard "/dashboard"
   end
 
   scope "/", MemoartWeb do
