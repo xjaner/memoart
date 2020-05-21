@@ -6,8 +6,6 @@ defmodule MemoartWeb.PageController do
   end
 
   def new(conn, %{"game_id" => game_id, "player_name" => player_name} = params) do
-    IO.puts("NEW")
-    IO.inspect(params)
     Phoenix.LiveView.Controller.live_render(conn, MemoartWeb.PlayLive, session: %{
       "game_id" => game_id,
       "player_name" => player_name

@@ -8,7 +8,7 @@
     <br>
     <form action="play" method="post">
       <input type="hidden" value="<%= @token %>" name="_csrf_token"/>
-      Nom de la Partida: <input type="text" name="game_id"/><br>
+      Nom de la partida: <input type="text" name="game_id"/><br>
       Nom de l'usuari: <input type="text" name="player_name"/><br>
       <input type="submit" value="A jugar!">
     </form>

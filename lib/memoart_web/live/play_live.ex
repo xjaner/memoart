@@ -6,11 +6,12 @@ defmodule MemoartWeb.PlayLive do
   alias Phoenix.Socket.Broadcast
 
   def mount(_params, %{"game_id" => game_id, "player_name" => player_name}, socket) do
-    game_name = "game:#{game_id}"
+    game_name = "game:#{String.downcase(game_id)}"
+    IO.puts("Received request from player #{player_name} to join game #{game_name}.")
+
     if connected?(socket), do: subscribe(game_name)
 
     {game_state, player_id} = Memoart.Game.get_game_session(game_name, player_name)
-    IO.puts("Getting #{game_name} game state'")
 
     socket = assign(socket,
       game_name: game_name,
@@ -47,7 +48,7 @@ defmodule MemoartWeb.PlayLive do
 
     new_state = case result do
       :ok -> Memoart.Session.next_player(game_name)
-      :no_match -> 
+      :no_match ->
         Process.send_after(self(), %{event: "no_match", player_id: player_id}, 2_000)
         new_state
       _ -> new_state
@@ -129,10 +130,6 @@ defmodule MemoartWeb.PlayLive do
       round_points: round_points,
       round_message: round_message
     )
-  end
-
-  defp set_error(socket, msg) do
-    assign(socket, :error, msg)
   end
 
   def error(%{error: error}) do
