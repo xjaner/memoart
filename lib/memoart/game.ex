@@ -93,33 +93,21 @@ defmodule Memoart.Game do
       _ ->
         cond do
           Enum.count(game_state.points) >= @max_players ->
-            game_state = %{game_state | error: "La partida està plena!"}
             {game_state, nil}
           true ->
-            add_player_to_points_and_rotation(game_state, player_name)
+            add_player_to_state(game_state, player_name)
         end
     end
   end
 
-  defp add_player_to_points_and_rotation(game_state, player_name) do
-    game_state
-    |> add_player_to_points()
-    |> add_player_to_rotation(player_name)
-    |> add_player_to_players(player_name)
-  end
-
-  defp add_player_to_points(game_state) do
-    %{game_state | points: Map.put_new(game_state.points, Enum.count(game_state.players), 0)}
-  end
-
-  defp add_player_to_rotation(game_state, player_name) do
-    %{game_state | rotation: Map.put_new(game_state.rotation, player_name, @seat_rotation[Enum.count(game_state.rotation)])}
-  end
-
-  defp add_player_to_players(game_state, player_name) do
-    new_player_id = Enum.count(game_state.players)
-    game_state = %{game_state | players: game_state.players ++ [player_name]}
-    {game_state, new_player_id}
+  defp add_player_to_state(game_state, player_name) do
+    player_id = Enum.count(game_state.players)
+    game_state = %{game_state | 
+      points: Map.put_new(game_state.points, Enum.count(game_state.players), 0),
+      rotation: Map.put_new(game_state.rotation, player_id, @seat_rotation[Enum.count(game_state.rotation)]),
+      players: game_state.players ++ [player_name]
+    }
+    {game_state, player_id}
   end
 
   def get_session_pid(game_name) do

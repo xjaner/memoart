@@ -6,8 +6,8 @@ defmodule MemoartWeb.PlayLive do
   alias Phoenix.Socket.Broadcast
 
   def mount(_params, %{"game_id" => game_id, "player_name" => player_name}, socket) do
-    game_name = "game:#{String.downcase(game_id)}"
-    IO.puts("[mount] from #{inspect(self())}")
+    game_name = "game:#{String.trim(String.downcase(game_id))}"
+    player_name = String.trim(player_name)
     IO.puts("Received request from player #{player_name} to join game #{game_name}.")
 
     if connected?(socket), do: subscribe(game_name)
@@ -21,14 +21,18 @@ defmodule MemoartWeb.PlayLive do
     )
 
     socket = set_game_state(socket, game_state)
-    MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", game_state)
 
-    Presence.track(
-      self(),
-      game_name,
-      player_name,
-      %{}
-    )
+    socket = case player_id do
+      nil ->
+        assign(socket,
+          error: "La partida està plena o ja ha començat!"
+        )
+
+      _ ->
+        MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", game_state)
+        Presence.track( self(), game_name, player_name, %{})
+        socket
+    end
 
     {:ok, socket}
   end
@@ -116,7 +120,7 @@ defmodule MemoartWeb.PlayLive do
 
   defp set_game_state(socket, game_state) do
     %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card_id: last_card_id, points: points, error: error, countdown: countdown, round_points: round_points, round_message: round_message, players: players, active_players: active_players, flipped_cards: flipped_cards} = game_state
-    cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_name)
+    cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_id)
     cards = Memoart.Game.show_first_line_if_needed(state, cards, socket.assigns.player_id)
     assign(
       socket,
@@ -139,14 +143,5 @@ defmodule MemoartWeb.PlayLive do
 
   def error(%{error: error}) do
     error
-  end
-
-  def splash(assigns) do
-    cond do
-      error(assigns) ->
-        true
-      true ->
-        false
-    end
   end
 end

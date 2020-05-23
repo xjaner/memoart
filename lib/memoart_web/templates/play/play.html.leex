@@ -1,6 +1,8 @@
 <div class="title">
   <h2>Juga al Memoart!</h2>
+  <%= if @player_name do %>
   <h5>Ets el jugador <%= @player_name%>. A la partida hi ha <%= Enum.count(@points) %> jugador<%= if Enum.count(@points) > 1 do %>s<% end %>.</h5>
+  <% end %>
 </div>
 <div class="msg">
   <%= if @state == :waiting and Enum.count(@points) > 1 do %>
@@ -72,7 +74,7 @@
             <div class="joined">
               <h1><%= @error %></h1>
             </div>
-            <a href="/" class="icon-padding action-button animate yellow">Vés a l'inici</a>
+            <a href="/" class="icon-padding action-button animate gotoindex">Vés a l'inici</a>
           </div>
         </div>
       <% end %>
