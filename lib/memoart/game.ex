@@ -202,14 +202,15 @@ defmodule Memoart.Game do
   end
 
   def card_click(%{cards: cards, current_player_id: current_player_id} = game_state, card_id, player_id) do
+    card_id_int = String.to_integer(card_id)
     # IO.puts("[Game.card_click] current_player_id: #{current_player_id} - player_id: #{player_id} - card_id: #{card_id}")
     IO.puts("[game.card_click/before] active_players: #{inspect(game_state.active_players)} - player_id: #{player_id} - current_player_id: #{game_state.current_player_id}")
     {result, game_state} = case current_player_id do
       ^player_id ->
         cards
-        |> Enum.map(&(flip_card(&1, String.to_integer(card_id))))
+        |> Enum.map(&(flip_card(&1, card_id_int)))
         |> process_matching(game_state)
-        |> validate_card(card_id)
+        |> validate_card(card_id_int)
 
       _ -> {:wrong_player, game_state}
     end
@@ -227,8 +228,8 @@ defmodule Memoart.Game do
   end
 
   defp validate_two_cards(game_state, last_card_id, current_card_id) do
-    last = Enum.at(game_state.cards, String.to_integer(last_card_id))
-    current = Enum.at(game_state.cards, String.to_integer(current_card_id))
+    last = Enum.at(game_state.cards, last_card_id)
+    current = Enum.at(game_state.cards, current_card_id)
     cond do
       last.item == current.item or last.painting == current.painting ->
         {:ok, game_state}
