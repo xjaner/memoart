@@ -1,5 +1,5 @@
 defmodule Memoart.Game do
-  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card_id: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, active_players: [], round_points: nil, last_player_id: nil, round_message: nil
+  defstruct game_name: nil, state: :waiting, current_round: 0, current_player_id: nil, last_card_id: nil, cards: [], points: %{}, error: nil, rotation: %{}, players: [], countdown: nil, active_players: [], round_points: nil, last_player_id: nil, round_message: nil, flipped_cards: []
 
   # States:
   # - waiting
@@ -223,7 +223,7 @@ defmodule Memoart.Game do
       nil -> {:ok, game_state}
       last_card_id -> validate_two_cards(game_state, last_card_id, card_id)
     end
-    game_state = %{game_state | last_card_id: card_id}
+    game_state = %{game_state | last_card_id: card_id, flipped_cards: [card_id | game_state.flipped_cards]}
     {result, game_state}
   end
 
@@ -272,7 +272,8 @@ defmodule Memoart.Game do
       current_player_id: 0,
       round_points: round_points,
       current_round: 1,
-      active_players: Enum.to_list(0..Enum.count(game_state.players)-1)
+      active_players: Enum.to_list(0..Enum.count(game_state.players)-1),
+      flipped_cards: []
     }
   end
 
@@ -309,7 +310,10 @@ defmodule Memoart.Game do
   end
 
   def reset_board(state) do
-    %{state | cards: Enum.map(state.cards, fn card -> %{card | flipped: ""} end)}
+    %{state |
+      cards: Enum.map(state.cards, fn card -> %{card | flipped: ""} end),
+      flipped_cards: []
+    }
   end
 
   def add_points(state, last_player_id, winner_id) do

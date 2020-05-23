@@ -47,10 +47,14 @@
                 <div class="flip-container <%= card_data.flipped %>">
                   <div class="flipper">
                     <div class="front">
+                      <%= if not Enum.member?(@flipped_cards, card_data.id) do %>
                       <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+                      <% end %>
                     </div>
                     <div class="back <%= card_data.painting %> <%= card_data.item %> <%= if card_data.id == @last_card_id do %>last_card<% end %>">
+                      <%= if not Enum.member?(@flipped_cards, card_data.id) do %>
                       <a href="#" phx-click="card_click_<%= card_data.id %>"></a>
+                    <% end %>
                     </div>
                   </div>
                 </div>
@@ -68,7 +72,7 @@
             <div class="joined">
               <h1><%= @error %></h1>
             </div>
-            <a href="/" class="icon-padding action-button animate purple">Vés a l'inici</a>
+            <a href="/" class="icon-padding action-button animate yellow">Vés a l'inici</a>
           </div>
         </div>
       <% end %>
