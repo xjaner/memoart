@@ -7,6 +7,7 @@ defmodule MemoartWeb.PlayLive do
 
   def mount(_params, %{"game_id" => game_id, "player_name" => player_name}, socket) do
     game_name = "game:#{String.downcase(game_id)}"
+    IO.puts("[mount] from #{inspect(self())}")
     IO.puts("Received request from player #{player_name} to join game #{game_name}.")
 
     if connected?(socket), do: subscribe(game_name)
@@ -44,7 +45,7 @@ defmodule MemoartWeb.PlayLive do
     %{game_name: game_name, player_name: player_name, player_id: player_id} = socket.assigns
 
     {result, new_state} = Memoart.Session.card_click(game_name, card_id, player_id)
-    IO.puts("card_click_#{card_id} by player #{player_name} in game #{game_name}: #{result}.")
+    IO.puts("[live.card_click/before] card_click_#{card_id} by player #{player_name} in game #{game_name}: #{result} - current_player_id: #{new_state.current_player_id}")
 
     new_state = case result do
       :ok -> Memoart.Session.next_player(game_name)
@@ -55,6 +56,8 @@ defmodule MemoartWeb.PlayLive do
     end
 
     MemoartWeb.Endpoint.broadcast_from!(self(), game_name, "refresh_state", new_state)
+
+    IO.puts("[live.card_click/after] card_click_#{card_id} by player #{player_name} in game #{game_name}: #{result} - current_player_id: #{new_state.current_player_id}")
 
     {:noreply, set_game_state(socket, new_state)}
   end
@@ -112,7 +115,7 @@ defmodule MemoartWeb.PlayLive do
   end
 
   defp set_game_state(socket, game_state) do
-    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card_id: last_card_id, points: points, error: error, countdown: countdown, round_points: round_points, round_message: round_message, players: players} = game_state
+    %Memoart.Game{state: state, current_player_id: current_player_id, current_round: current_round, last_card_id: last_card_id, points: points, error: error, countdown: countdown, round_points: round_points, round_message: round_message, players: players, active_players: active_players} = game_state
     cards = Memoart.Game.rotate_cards(game_state, socket.assigns.player_name)
     cards = Memoart.Game.show_first_line_if_needed(state, cards, socket.assigns.player_id)
     assign(
@@ -128,7 +131,8 @@ defmodule MemoartWeb.PlayLive do
       error: error,
       countdown: countdown,
       round_points: round_points,
-      round_message: round_message
+      round_message: round_message,
+      active_players: active_players
     )
   end
 

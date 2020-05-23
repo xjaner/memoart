@@ -448,3 +448,16 @@ transform: rotateY(180deg);
     font-size: 3vw;
   }
 }
+
+.player_points {
+  display: inline;
+  font-weight: bold;
+}
+
+.player_points.current {
+  color: green;
+}
+
+.player_points.dead {
+  color: red;
+}

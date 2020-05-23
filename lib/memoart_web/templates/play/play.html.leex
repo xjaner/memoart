@@ -79,7 +79,7 @@
       <h4>Puntuació</h4>
       <ul>
         <%= for {id, player_points} <- @points do %>
-          <li><strong><%= Enum.at(@players, id) %>:</strong> <%= player_points %> punts</li>
+          <li><div class="player_points <%= if String.starts_with?(Atom.to_string(@state), "round_") do %><%= if not Enum.member?(@active_players, id) do %>dead<% end %><%= if @current_player_id == id do %>current<% end %><% end %>"><%= Enum.at(@players, id) %>:</div> <%= player_points %> punts</li>
         <% end %>
       </ul>
     </div>

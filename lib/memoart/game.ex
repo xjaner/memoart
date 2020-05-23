@@ -130,6 +130,7 @@ defmodule Memoart.Game do
 
   def new_game(game_name) do
     cards = get_cards()
+    IO.puts("[new_game] start_link from #{inspect(self())}")
     GenServer.start_link(Memoart.Session, %{cards: cards, game_name: game_name, countdown: @countdown_seconds}, name: String.to_atom(game_name))
   end
 
@@ -201,8 +202,9 @@ defmodule Memoart.Game do
   end
 
   def card_click(%{cards: cards, current_player_id: current_player_id} = game_state, card_id, player_id) do
-    IO.puts("[Game.card_click] current_player_id: #{current_player_id} - player_id: #{player_id} - card_id: #{card_id}")
-    case current_player_id do
+    # IO.puts("[Game.card_click] current_player_id: #{current_player_id} - player_id: #{player_id} - card_id: #{card_id}")
+    IO.puts("[game.card_click/before] active_players: #{inspect(game_state.active_players)} - player_id: #{player_id} - current_player_id: #{game_state.current_player_id}")
+    {result, game_state} = case current_player_id do
       ^player_id ->
         cards
         |> Enum.map(&(flip_card(&1, String.to_integer(card_id))))
@@ -211,6 +213,8 @@ defmodule Memoart.Game do
 
       _ -> {:wrong_player, game_state}
     end
+    IO.puts("[game.card_click/after] active_players: #{inspect(game_state.active_players)} - player_id: #{player_id} - current_player_id: #{game_state.current_player_id}")
+    {result, game_state}
   end
 
   defp validate_card(game_state, card_id) do
@@ -281,8 +285,11 @@ defmodule Memoart.Game do
     end
   end
 
-  def next_player(state) do
-    %{state | current_player_id: rem(state.current_player_id + 1, Enum.count(state.active_players))}
+  def next_player(game_state) do
+    IO.puts("[next_player/before] active_players: #{inspect(game_state.active_players)} - current_player_id: #{game_state.current_player_id}")
+    game_state = %{game_state | current_player_id: Enum.at(game_state.active_players, rem(get_item_pos(game_state.active_players, game_state.current_player_id) + 1, Enum.count(game_state.active_players)))}
+    IO.puts("[next_player/after] active_players: #{inspect(game_state.active_players)} - current_player_id: #{game_state.current_player_id}")
+    game_state
   end
 
   def get_winner_id(state) do
@@ -329,22 +336,26 @@ defmodule Memoart.Game do
   end
 
   def next_round(state, player_id) do
+    IO.puts("active_players: #{inspect(state.active_players)} - player_id: #{player_id}")
     [winner_id] = state.active_players -- [player_id]
     state
     |> add_points(player_id, winner_id)
   end
 
   defp remove_player(game_state, player_id) do
+    IO.puts("[remove_player/before] active_players: #{inspect(game_state.active_players)} - player_id: #{player_id} - current_player_id: #{game_state.current_player_id}")
     dead_player_pos = get_item_pos(game_state.active_players, player_id)
     game_state = %{game_state |
       active_players: game_state.active_players -- [player_id],
       round_message: nil
     }
-    %{game_state | current_player_id: Enum.at(game_state.active_players, rem(dead_player_pos, Enum.count(game_state.active_players)))}
+    game_state = %{game_state | current_player_id: Enum.at(game_state.active_players, rem(dead_player_pos, Enum.count(game_state.active_players)))}
+    IO.puts("[remove_player/after] active_players: #{inspect(game_state.active_players)} - player_id: #{player_id} - current_player_id: #{game_state.current_player_id}")
+    game_state
   end
 
   def no_match(state, player_id) do
-    cond do
+    state = cond do
       Enum.count(state.active_players) > 2 ->
         state
         |> remove_player(player_id)
@@ -352,5 +363,7 @@ defmodule Memoart.Game do
         state
         |> next_round(player_id)
     end
+    IO.puts("[no_match/after] active_players: #{inspect(state.active_players)} - player_id: #{player_id} - current_player_id: #{state.current_player_id}")
+    state
   end
 end
